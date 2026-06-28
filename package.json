@@ -1,0 +1,57 @@
+{
+    "name": "@fiduswriter/cli",
+    "version": "0.1.0",
+    "description": "Command-line interface for Fidus Writer document conversion",
+    "type": "module",
+    "main": "dist/index.js",
+    "bin": {
+        "fidusconvert": "dist/bin/fidusconvert.js"
+    },
+    "scripts": {
+        "build": "tsc",
+        "prepare": "npm run build",
+        "start": "node dist/bin/fidusconvert.js",
+        "test": "tsx test/convert.test.ts"
+    },
+    "keywords": [
+        "fiduswriter",
+        "document",
+        "converter",
+        "cli",
+        "docx",
+        "odt",
+        "latex",
+        "html",
+        "epub",
+        "jats",
+        "pandoc"
+    ],
+    "author": "Johannes Wilm",
+    "license": "AGPL-3.0-or-later",
+    "repository": {
+        "type": "git",
+        "url": "ssh://git@codeberg.org/fiduswriter/fiduswriter-cli.git"
+    },
+    "publishConfig": {
+        "access": "public"
+    },
+    "dependencies": {
+        "@fiduswriter/document": "^0.1.1",
+        "citeproc-plus": "^1.0.1",
+        "commander": "^13.1.0",
+        "fwtoolkit": "^0.1.3",
+        "jszip": "^3.10.1"
+    },
+    "devDependencies": {
+        "@types/node": "^22.0.0",
+        "tsx": "^4.22.4",
+        "typescript": "^5.8.0"
+    },
+    "engines": {
+        "node": ">=18.0.0"
+    },
+    "files": [
+        "dist/",
+        "templates/"
+    ]
+}

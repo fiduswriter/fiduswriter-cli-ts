@@ -1,0 +1,18 @@
+Source: fidusconvert
+Section: utils
+Priority: optional
+Maintainer: Johannes Wilm <johannes@wilm.one>
+Build-Depends: debhelper (>= 13), nodejs (>= 18), npm
+Standards-Version: 4.6.2
+Homepage: https://fiduswriter.org
+
+Package: fidusconvert
+Architecture: all
+Depends: nodejs (>= 18), ${misc:Depends}
+Description: Command-line tool for Fidus Writer document conversion
+ fidusconvert provides command-line tools for converting between
+ Fidus Writer (.fidus) document format and various other formats including
+ DOCX, ODT, LaTeX, HTML, EPUB, JATS, and Pandoc JSON.
+ .
+ It is built on top of the @fiduswriter/document library which implements
+ the Fidus Writer document schema, importers, and exporters.

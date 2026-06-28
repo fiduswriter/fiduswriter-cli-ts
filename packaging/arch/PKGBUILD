@@ -1,0 +1,31 @@
+# Maintainer: Johannes Wilm <johannes@wilm.one>
+pkgname=fidusconvert
+pkgver=0.1.0
+pkgrel=1
+pkgdesc="Command-line tool for Fidus Writer document conversion"
+arch=('any')
+url="https://fiduswriter.org"
+license=('AGPL3')
+depends=('nodejs>=18' 'npm')
+makedepends=('typescript')
+source=("$pkgname-$pkgver.tar.gz::https://codeberg.org/fiduswriter/fiduswriter-cli/archive/v$pkgver.tar.gz")
+sha256sums=('SKIP')
+
+build() {
+    cd "$srcdir/fiduswriter-cli"
+    npm install
+    npm run build
+}
+
+package() {
+    cd "$srcdir/fiduswriter-cli"
+
+    install -d "$pkgdir/usr/lib/node_modules/@fiduswriter/cli"
+    cp -r dist templates package.json "$pkgdir/usr/lib/node_modules/@fiduswriter/cli/"
+
+    cd "$pkgdir/usr/lib/node_modules/@fiduswriter/cli"
+    npm install --production --ignore-scripts
+
+    install -d "$pkgdir/usr/bin"
+    ln -sf "/usr/lib/node_modules/@fiduswriter/cli/dist/bin/fidusconvert.js" "$pkgdir/usr/bin/fidusconvert"
+}

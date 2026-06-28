@@ -1,0 +1,23 @@
+# Dependencies
+node_modules/
+
+# Build output (rebuilt by prepare script during npm install/publish)
+dist/
+
+# Temporary runtime directory
+.fiduswriter-cli-tmp/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Coverage
+coverage/
+
+# Environment files
+.env
+.env.local
+
+# OS files
+.DS_Store
+Thumbs.db

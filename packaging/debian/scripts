@@ -1,0 +1,10 @@
+postinst
+{
+    cd /usr/lib/node_modules/@fiduswriter/cli
+    npm install --production --ignore-scripts 2>/dev/null || true
+}
+
+postrm
+{
+    rm -rf /usr/lib/node_modules/@fiduswriter/cli
+}

@@ -1,4 +1,4 @@
-import {execFile} from "node:child_process"
+import {spawn} from "node:child_process"
 import {stat, readFile} from "node:fs/promises"
 import {join} from "node:path"
 import JSZip from "jszip"
@@ -6,20 +6,46 @@ import JSZip from "jszip"
 const CLI = join(import.meta.dirname, "..", "..", "dist", "bin", "fidusconvert.js")
 
 export interface RunResult {
-    stdout: string
+    stdout: Buffer
     stderr: string
     code: number
 }
 
-export function run(args: string[], timeout = 60000): Promise<RunResult> {
+function collectOutput(child: ReturnType<typeof spawn>): Promise<RunResult> {
     return new Promise(resolve => {
-        execFile("node", [CLI, ...args], {timeout}, (err, stdout, stderr) => {
+        const stdoutChunks: Buffer[] = []
+        let stderr = ""
+        child.stdout.on("data", (data: Buffer) => {
+            stdoutChunks.push(data)
+        })
+        child.stderr.on("data", (data: Buffer) => {
+            stderr += data.toString("utf-8")
+        })
+        child.on("close", code => {
             resolve({
-                stdout: stdout || "",
-                stderr: stderr || "",
-                code: err && "code" in err ? (err as any).code : 0
+                stdout: Buffer.concat(stdoutChunks),
+                stderr,
+                code: code ?? 0
             })
         })
+    })
+}
+
+export function run(args: string[], timeout = 60000): Promise<RunResult> {
+    return collectOutput(spawn("node", [CLI, ...args], {timeout}))
+}
+
+export function runWithStdin(
+    args: string[],
+    input: string | Buffer,
+    timeout = 60000
+): Promise<RunResult> {
+    return new Promise(resolve => {
+        const child = spawn("node", [CLI, ...args], {timeout})
+        const promise = collectOutput(child)
+        child.stdin.write(input)
+        child.stdin.end()
+        promise.then(resolve)
     })
 }
 

@@ -1,6 +1,8 @@
 import type {Command} from "commander"
-import {readFile} from "node:fs/promises"
+import {mkdtemp, readFile, rm, writeFile} from "node:fs/promises"
 import {extname, join, resolve} from "node:path"
+import {tmpdir} from "node:os"
+import JSZip from "jszip"
 
 import {ensureInit} from "../init.js"
 import {readFidusFile} from "../utils/fidus-reader.js"
@@ -40,8 +42,8 @@ type Format = (typeof FORMATS)[number]
 
 function addConvertOptions(cmd: Command): void {
     cmd
-        .argument("<input>", "Path to the input file")
-        .argument("<output>", "Path to the output file")
+        .argument("<input>", "Path to the input file, or '-' to read from stdin")
+        .argument("<output>", "Path to the output file, or '-' to write to stdout")
         .option(
             "--from <format>",
             `Input format (${FORMATS.join(", ")}; auto-detected from extension if omitted)`
@@ -83,31 +85,69 @@ async function doConvert(
 ): Promise<void> {
     ensureInit()
 
-    const resolvedInput = resolve(inputPath)
-    const resolvedOutput = resolve(outputPath)
+    const inputIsStdin = inputPath === "-"
+    const outputIsStdout = outputPath === "-"
 
-    const fromFormat = (options.from as Format | undefined) ?? detectFormat(resolvedInput)
-    const toFormat = (options.to as Format | undefined) ?? detectFormat(resolvedOutput)
+    const fromFormat =
+        (options.from as Format | undefined) ??
+        (inputIsStdin ? undefined : detectFormat(resolve(inputPath)))
+    const toFormat =
+        (options.to as Format | undefined) ??
+        (outputIsStdout ? undefined : detectFormat(resolve(outputPath)))
 
     if (!fromFormat || !FORMATS.includes(fromFormat)) {
-        console.error(`Could not determine input format. Use --from to specify: ${FORMATS.join(", ")}`)
+        console.error(
+            `Could not determine input format. Use --from to specify: ${FORMATS.join(", ")}`
+        )
         process.exit(1)
     }
     if (!toFormat || !FORMATS.includes(toFormat)) {
-        console.error(`Could not determine output format. Use --to to specify: ${FORMATS.join(", ")}`)
+        console.error(
+            `Could not determine output format. Use --to to specify: ${FORMATS.join(", ")}`
+        )
         process.exit(1)
     }
 
-    console.log(`Converting ${resolvedInput} (${fromFormat}) -> ${resolvedOutput} (${toFormat})`)
+    const status = inputIsStdin
+        ? outputIsStdout
+            ? `Converting stdin (${fromFormat}) -> stdout (${toFormat})`
+            : `Converting stdin (${fromFormat}) -> ${resolve(outputPath)} (${toFormat})`
+        : outputIsStdout
+          ? `Converting ${resolve(inputPath)} (${fromFormat}) -> stdout (${toFormat})`
+          : `Converting ${resolve(inputPath)} (${fromFormat}) -> ${resolve(outputPath)} (${toFormat})`
 
-    if (fromFormat === "fidus") {
-        await exportFromFidus(resolvedInput, resolvedOutput, toFormat, options)
-    } else {
-        const fidusPath = await importToFidus(resolvedInput, fromFormat)
-        await exportFromFidus(fidusPath, resolvedOutput, toFormat, options)
+    if (!outputIsStdout) {
+        console.error(status)
     }
 
-    console.log(`Output written to ${resolvedOutput}`)
+    let actualInputPath = inputIsStdin
+        ? await stdinToTempFile(fromFormat)
+        : resolve(inputPath)
+    let actualOutputPath = outputIsStdout
+        ? await tempOutputPath(toFormat)
+        : resolve(outputPath)
+
+    try {
+        if (fromFormat === "fidus") {
+            await exportFromFidus(actualInputPath, actualOutputPath, toFormat, options)
+        } else {
+            const fidusPath = await importToFidus(actualInputPath, fromFormat)
+            await exportFromFidus(fidusPath, actualOutputPath, toFormat, options)
+        }
+
+        if (outputIsStdout) {
+            await writeOutputToStdout(actualOutputPath, toFormat)
+        } else {
+            console.log(`Output written to ${resolve(outputPath)}`)
+        }
+    } finally {
+        if (inputIsStdin) {
+            await rm(actualInputPath, {force: true})
+        }
+        if (outputIsStdout) {
+            await rm(actualOutputPath, {force: true})
+        }
+    }
 }
 
 async function exportFromFidus(
@@ -264,5 +304,70 @@ function detectFormat(filePath: string): Format | undefined {
             return undefined
         default:
             return undefined
+    }
+}
+
+function extForFormat(format: Format): string {
+    switch (format) {
+        case "fidus":
+            return ".fidus"
+        case "docx":
+            return ".docx"
+        case "odt":
+            return ".odt"
+        case "latex":
+            return ".latex.zip"
+        case "html":
+            return ".html.zip"
+        case "epub":
+            return ".epub"
+        case "jats":
+            return ".jats.zip"
+        case "pandoc":
+            return ".pandoc.json.zip"
+    }
+}
+
+let tmpDirCache: string | undefined
+
+async function getTmpDir(): Promise<string> {
+    if (!tmpDirCache) {
+        tmpDirCache = await mkdtemp(join(tmpdir(), "fidusconvert-"))
+    }
+    return tmpDirCache
+}
+
+async function stdinToTempFile(format: Format): Promise<string> {
+    const tmpDir = await getTmpDir()
+    const path = join(tmpDir, `stdin${extForFormat(format)}`)
+    const chunks: Buffer[] = []
+    for await (const chunk of process.stdin) {
+        chunks.push(Buffer.from(chunk))
+    }
+    await writeFile(path, Buffer.concat(chunks))
+    return path
+}
+
+async function tempOutputPath(format: Format): Promise<string> {
+    const tmpDir = await getTmpDir()
+    return join(tmpDir, `stdout${extForFormat(format)}`)
+}
+
+async function writeOutputToStdout(
+    outputPath: string,
+    toFormat: Format
+): Promise<void> {
+    if (toFormat === "pandoc") {
+        const buf = await readFile(outputPath)
+        const zip = await JSZip.loadAsync(buf)
+        const jsonFile = zip.file("document.json")
+        if (!jsonFile) {
+            throw new Error("Pandoc output is missing document.json")
+        }
+        const json = await jsonFile.async("string")
+        process.stdout.write(json)
+    } else {
+        const buf = await readFile(outputPath)
+        process.stdout.write(buf)
     }
 }

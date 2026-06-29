@@ -104,14 +104,14 @@ describe("fidusconvert CLI", () => {
     it("shows version", async () => {
         const result = await run(["--version"])
         assert.equal(result.code, 0)
-        assert.match(result.stdout.trim(), /^\d+\.\d+\.\d+$/)
+        assert.match(result.stdout.toString("utf-8").trim(), /^\d+\.\d+\.\d+$/)
     })
 
     it("shows help", async () => {
         const result = await run(["--help"])
         assert.equal(result.code, 0)
-        assert.ok(result.stdout.includes("convert"))
-        assert.ok(result.stdout.includes("info"))
+        assert.ok(result.stdout.toString("utf-8").includes("convert"))
+        assert.ok(result.stdout.toString("utf-8").includes("info"))
     })
 
     it("fails with unknown format", async () => {
@@ -260,8 +260,8 @@ describe("info command", () => {
     it("shows document info", async () => {
         const result = await run(["info", FIXTURE])
         assert.equal(result.code, 0, `stderr: ${result.stderr}`)
-        assert.ok(result.stdout.includes("Test Document"))
-        assert.ok(result.stdout.includes("en-US"))
+        assert.ok(result.stdout.toString("utf-8").includes("Test Document"))
+        assert.ok(result.stdout.toString("utf-8").includes("en-US"))
     })
 
     it("fails on invalid file", async () => {

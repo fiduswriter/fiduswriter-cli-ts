@@ -51,6 +51,28 @@ fidusconvert --docx-template my-template.docx document.fidus output.docx
 fidusconvert --jats-type book-part-wrapper document.fidus output.jats.zip
 ```
 
+### Pipe through stdin/stdout
+
+Use `-` as the input or output path to read from stdin or write to stdout.
+When `-` is used, the format must be given explicitly with `--from` or `--to`.
+
+```bash
+# Markdown → Pandoc JSON → Fidus Writer
+pandoc -f markdown -t json input.md | fidusconvert --from pandoc --to fidus - output.fidus
+
+# Fidus Writer → raw Pandoc JSON → Markdown
+fidusconvert --from fidus --to pandoc input.fidus - | pandoc -f json -t markdown
+
+# .fidus → DOCX on stdout (binary, redirect to a file)
+fidusconvert --from fidus --to docx input.fidus - > output.docx
+```
+
+Status messages are written to stderr so they do not mix with piped output.
+
+When exporting to `--to pandoc -`, the raw Pandoc JSON document is emitted on
+stdout (not the usual `.pandoc.json.zip` archive). For all other formats the
+binary archive is written directly to stdout.
+
 ### Inspect a .fidus file
 
 ```bash

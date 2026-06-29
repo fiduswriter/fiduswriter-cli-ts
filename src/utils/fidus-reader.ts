@@ -91,6 +91,10 @@ export async function readFidusFile(filePath: string): Promise<FidusReadResult> 
         version: FW_DOCUMENT_VERSION
     }
 
+    if (docJson.comments) {
+        exportDoc.comments = docJson.comments
+    }
+
     return {
         doc: exportDoc,
         bibDB: {db: updated.bibliography as BibDBEntries},

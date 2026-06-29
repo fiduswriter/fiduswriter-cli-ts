@@ -18,6 +18,16 @@ const UNKNOWN_STYLE_FIXTURE = join(
     "test",
     "unknown-style-document.fidus"
 )
+const REAL_WORLD_FIXTURE = join(
+    dirname(import.meta.dirname),
+    "test",
+    "nationalization.fidus"
+)
+const MISSING_COMMENTS_FIXTURE = join(
+    dirname(import.meta.dirname),
+    "test",
+    "comments-missing.fidus"
+)
 const CLASSIC_DOCX = join(dirname(import.meta.dirname), "templates", "Classic.docx")
 const FREE_ODT = join(dirname(import.meta.dirname), "templates", "Free.odt")
 
@@ -411,6 +421,25 @@ describe("citation handling", () => {
     it("accepts an explicit citation style override", async () => {
         const out = outputPath("style-override.docx")
         const result = await run(["--style", "chicago-author-date", CITATIONS_FIXTURE, out])
+        assert.equal(result.code, 0, `stderr: ${result.stderr}`)
+        assert(await fileExists(out))
+        assert(await isZipWithEntry(out, "word/document.xml"))
+    })
+})
+
+describe("real-world fixture", () => {
+    it("converts a document with comments and citations", async () => {
+        const out = outputPath("real-world.docx")
+        const result = await run([REAL_WORLD_FIXTURE, out])
+        assert.equal(result.code, 0, `stderr: ${result.stderr}`)
+        assert(await fileExists(out))
+        assert(await isZipWithEntry(out, "word/document.xml"))
+        assert(await isZipWithEntry(out, "word/comments.xml"))
+    })
+
+    it("converts a document with orphaned comment marks gracefully", async () => {
+        const out = outputPath("comments-missing.docx")
+        const result = await run([MISSING_COMMENTS_FIXTURE, out])
         assert.equal(result.code, 0, `stderr: ${result.stderr}`)
         assert(await fileExists(out))
         assert(await isZipWithEntry(out, "word/document.xml"))

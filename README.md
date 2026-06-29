@@ -16,6 +16,15 @@ npm install -g @fiduswriter/cli
 See [INSTALL.md](./INSTALL.md) for platform-specific packages (Debian, Arch,
 Fedora, macOS Homebrew) and building from source.
 
+## Update
+
+If you installed the package globally with npm, update it to the latest version
+with:
+
+```bash
+npm install -g @fiduswriter/cli@latest
+```
+
 ## Usage
 
 ### Convert documents

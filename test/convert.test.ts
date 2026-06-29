@@ -8,6 +8,16 @@ import JSZip from "jszip"
 
 const CLI = join(dirname(import.meta.dirname), "dist", "bin", "fidusconvert.js")
 const FIXTURE = join(dirname(import.meta.dirname), "test", "test-document.fidus")
+const CITATIONS_FIXTURE = join(
+    dirname(import.meta.dirname),
+    "test",
+    "citations-document.fidus"
+)
+const UNKNOWN_STYLE_FIXTURE = join(
+    dirname(import.meta.dirname),
+    "test",
+    "unknown-style-document.fidus"
+)
 const CLASSIC_DOCX = join(dirname(import.meta.dirname), "templates", "Classic.docx")
 const FREE_ODT = join(dirname(import.meta.dirname), "templates", "Free.odt")
 
@@ -370,5 +380,39 @@ describe("edge cases", () => {
         result = await run([out1, out2])
         assert.equal(result.code, 0, `stderr: ${result.stderr}`)
         assert(await isZipWithEntry(out2, "document.json"))
+    })
+})
+
+describe("citation handling", () => {
+    it("exports a document containing citations", async () => {
+        const out = outputPath("citations.docx")
+        const result = await run([CITATIONS_FIXTURE, out])
+        assert.equal(result.code, 0, `stderr: ${result.stderr}`)
+        assert(await fileExists(out))
+        assert(await isZipWithEntry(out, "word/document.xml"))
+    })
+
+    it("falls back to the default style when the document style is unknown", async () => {
+        const out = outputPath("unknown-style.docx")
+        const result = await run([UNKNOWN_STYLE_FIXTURE, out])
+        assert.equal(result.code, 0, `stderr: ${result.stderr}`)
+        assert.ok(
+            result.stderr.includes('Unknown citation style "chicago-note-bibliography"'),
+            `expected warning in stderr, got: ${result.stderr}`
+        )
+        assert.ok(
+            result.stderr.includes('Falling back to the default style "apa"'),
+            `expected fallback warning in stderr, got: ${result.stderr}`
+        )
+        assert(await fileExists(out))
+        assert(await isZipWithEntry(out, "word/document.xml"))
+    })
+
+    it("accepts an explicit citation style override", async () => {
+        const out = outputPath("style-override.docx")
+        const result = await run(["--style", "chicago-author-date", CITATIONS_FIXTURE, out])
+        assert.equal(result.code, 0, `stderr: ${result.stderr}`)
+        assert(await fileExists(out))
+        assert(await isZipWithEntry(out, "word/document.xml"))
     })
 })

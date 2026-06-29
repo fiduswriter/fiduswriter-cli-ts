@@ -4,27 +4,33 @@ import type {CSL as DocumentCSL} from "@fiduswriter/document"
 
 const DEFAULT_STYLE = "apa"
 
+export interface LoadedCSL {
+    csl: DocumentCSL
+    styleName: string
+}
+
 /**
  * Build a CSL instance configured for the requested citation style.
  *
- * The style is resolved against citeproc-plus's bundled catalog of 2000+
- * CSL styles. If the requested style is not available, an error is thrown
- * listing the available styles.
+ * The style is resolved against citeproc-plus's bundled catalog. If the
+ * requested style is not available, a warning is printed and the default
+ * style is used instead.
  */
-export async function loadCSL(styleName?: string): Promise<DocumentCSL> {
-    const resolvedName = styleName || DEFAULT_STYLE
+export async function loadCSL(styleName?: string): Promise<LoadedCSL> {
+    const requestedName = styleName || DEFAULT_STYLE
     const catalog = new CSL()
     const styles = await catalog.getStyles()
 
-    if (!styles[resolvedName]) {
-        const available = Object.keys(styles)
-        throw new Error(
-            `Unknown citation style "${resolvedName}". ` +
-                `Use any ID from the citeproc-plus catalog (${available.length} styles, ` +
-                `e.g. apa, chicago-author-date, ieee).`
+    const resolvedName = styles[requestedName] ? requestedName : DEFAULT_STYLE
+
+    if (resolvedName !== requestedName) {
+        console.warn(
+            `Unknown citation style "${requestedName}". ` +
+                `Falling back to the default style "${DEFAULT_STYLE}".`
         )
     }
 
     const style = await catalog.getStyle(resolvedName)
-    return createCSL({[resolvedName]: style})
+    const csl = await createCSL({[resolvedName]: style})
+    return {csl, styleName: resolvedName}
 }

@@ -38,10 +38,8 @@ const FORMATS = [
 
 type Format = (typeof FORMATS)[number]
 
-export function registerConvertCommand(program: Command): void {
-    program
-        .command("convert", {isDefault: true})
-        .description("Convert a document between formats")
+function addConvertOptions(cmd: Command): void {
+    cmd
         .argument("<input>", "Path to the input file")
         .argument("<output>", "Path to the output file")
         .option(
@@ -59,9 +57,23 @@ export function registerConvertCommand(program: Command): void {
         .option("--docx-template <path>", "Custom DOCX template file")
         .option("--odt-template <path>", "Custom ODT template file")
         .option("--jats-type <type>", "JATS type: article, book-part-wrapper, book", "article")
-        .action(async (input, output, options) => {
-            await doConvert(input, output, options)
-        })
+}
+
+export function registerConvertCommand(program: Command): void {
+    // The convert command is the default action, so its options are also
+    // exposed at the top level for discoverability.
+    addConvertOptions(program)
+    program.action(async (input, output, options) => {
+        await doConvert(input, output, options)
+    })
+
+    // Keep an explicit "convert" subcommand for users who prefer it.
+    const convertCmd = program.command("convert")
+    convertCmd.description("Convert a document between formats")
+    addConvertOptions(convertCmd)
+    convertCmd.action(async (input, output, options) => {
+        await doConvert(input, output, options)
+    })
 }
 
 async function doConvert(
@@ -106,8 +118,8 @@ async function exportFromFidus(
 ): Promise<void> {
     const {doc, bibDB, imageDB} = await readFidusFile(fidusPath)
     const styleToUse = options.style || doc.settings.citationstyle || "apa"
-    doc.settings.citationstyle = styleToUse
-    const csl = await loadCSL(styleToUse)
+    const {csl, styleName} = await loadCSL(styleToUse)
+    doc.settings.citationstyle = styleName
     const updated = new Date()
 
     switch (toFormat) {

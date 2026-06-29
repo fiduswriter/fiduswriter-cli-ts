@@ -11,7 +11,7 @@
         "build": "tsc",
         "prepare": "npm run build",
         "start": "node dist/bin/fidusconvert.js",
-        "test": "tsx test/convert.test.ts"
+        "test": "tsx --test test/*.test.ts"
     },
     "keywords": [
         "fiduswriter",
@@ -36,7 +36,7 @@
         "access": "public"
     },
     "dependencies": {
-        "@fiduswriter/document": "^0.1.2",
+        "@fiduswriter/document": "^0.1.3",
         "citeproc-plus": "^1.0.1",
         "commander": "^13.1.0",
         "fwtoolkit": "^0.1.3",
@@ -45,6 +45,7 @@
     },
     "devDependencies": {
         "@types/node": "^22.0.0",
+        "fast-xml-parser": "^5.9.3",
         "tsx": "^4.22.4",
         "typescript": "^5.8.0"
     },

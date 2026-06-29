@@ -97,6 +97,47 @@ npm install
 npm run build
 ```
 
+### Tests
+
+The full test suite uses [Pandoc](https://pandoc.org) to generate DOCX, ODT and
+Pandoc-JSON fixtures from Markdown sources and to cross-check exported files.
+Make sure Pandoc is installed before running the tests:
+
+```bash
+# Debian/Ubuntu
+sudo apt-get install pandoc
+
+# macOS
+brew install pandoc
+```
+
+Run all tests:
+
+```bash
+npm test
+```
+
+If Pandoc is unavailable, the core CLI tests in `test/convert.test.ts` can be
+run directly:
+
+```bash
+npx tsx test/convert.test.ts
+```
+
+The test suite covers:
+
+- All supported export formats from `.fidus` files.
+- Import of DOCX, ODT and Pandoc JSON files into `.fidus`.
+- A full conversion matrix (Markdown → DOCX/ODT/JSON → `.fidus` → every output
+  format) with content checks.
+- Pre-existing DOCX and ODT fixtures, including files with tracked changes,
+  comments, footnotes and citation-manager fields.
+- Synthetic DOCX files built from citation-manager `word/document.xml`
+  fragments (Zotero, Mendeley, EndNote and Word-native bibliographies), with
+  Word-native sources bundled as `customXml/item1.xml`.
+- Synthetic ODT files built from citation-manager `content.xml` fragments
+  (Zotero reference marks and LibreOffice native bibliography marks).
+
 ## License
 
 AGPL-3.0-or-later

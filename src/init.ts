@@ -1,7 +1,7 @@
 import {initSettings} from "fwtoolkit"
 import {Window} from "happy-dom"
 import {fileURLToPath} from "node:url"
-import {dirname, join} from "node:path"
+import {dirname} from "node:path"
 
 let initialized = false
 

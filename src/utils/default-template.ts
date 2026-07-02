@@ -1,4 +1,4 @@
-import type {Template, FidusNode} from "@fiduswriter/document"
+import type {FidusNode} from "@fiduswriter/document"
 
 export function getDefaultTemplate(): Record<string, unknown> {
     return {

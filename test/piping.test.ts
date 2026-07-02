@@ -1,7 +1,7 @@
 import {describe, it, before, after} from "node:test"
 import assert from "node:assert/strict"
 import {spawn} from "node:child_process"
-import {mkdtemp, rm, readFile} from "node:fs/promises"
+import {mkdtemp, rm} from "node:fs/promises"
 import {join, dirname} from "node:path"
 import {tmpdir} from "node:os"
 import JSZip from "jszip"

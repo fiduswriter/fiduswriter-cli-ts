@@ -165,7 +165,7 @@ const NODE_DEFAULT_ATTRS: Record<string, Record<string, unknown>> = {
     separator_part: {id: "separator"}
 }
 
-function fillDefaultAttrs(node: unknown): unknown {
+export function fillDefaultAttrs(node: unknown): unknown {
     if (!node || typeof node !== "object" || Array.isArray(node)) return node
     const n = node as Record<string, unknown>
     if (typeof n.type !== "string") return node

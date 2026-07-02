@@ -24,7 +24,7 @@ export async function loadCSL(styleName?: string): Promise<LoadedCSL> {
     const resolvedName = styles[requestedName] ? requestedName : DEFAULT_STYLE
 
     if (resolvedName !== requestedName) {
-        console.warn(
+        console.error(
             `Unknown citation style "${requestedName}". ` +
                 `Falling back to the default style "${DEFAULT_STYLE}".`
         )

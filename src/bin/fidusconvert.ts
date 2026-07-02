@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import {registerConvertBookCommand} from "../commands/convert-book.js"
 import {createRequire} from "node:module"
 
 import {program} from "commander"
@@ -16,6 +17,7 @@ program
 
 registerConvertCommand(program)
 registerInfoCommand(program)
+registerConvertBookCommand(program)
 
 program.addHelpText(
     "after",

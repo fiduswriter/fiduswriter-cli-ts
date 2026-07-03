@@ -155,6 +155,116 @@ describe("fidus → export formats", () => {
         assert(await isZipWithEntry(out, "Pictures/image-91.png"))
     })
 
+    it("fidus → latex with image", async () => {
+        const out = outputPath("image.latex.zip")
+        const result = await run([IMAGE_FIXTURE, out])
+        assert.equal(result.code, 0, `stderr: ${result.stderr}`)
+        assert(await fileExists(out))
+        assert(await fileMinSize(out, 100000))
+        assert(await isZipWithEntry(out, "document.tex"))
+        assert(await isZipWithEntry(out, "image-91.png"))
+        assert(
+            await isZipWithXmlEntry(
+                out,
+                "document.tex",
+                /\\scaledgraphics\{image-91\.png\}/
+            )
+        )
+    })
+
+    it("fidus → html with image", async () => {
+        const out = outputPath("image.html.zip")
+        const result = await run([IMAGE_FIXTURE, out])
+        assert.equal(result.code, 0, `stderr: ${result.stderr}`)
+        assert(await fileExists(out))
+        assert(await fileMinSize(out, 100000))
+        assert(await isZipWithEntry(out, "document.html"))
+        assert(await isZipWithEntry(out, "images/image-91.png"))
+        assert(
+            await isZipWithXmlEntry(
+                out,
+                "document.html",
+                /src="images\/image-91\.png"/
+            )
+        )
+    })
+
+    it("fidus → epub with image", async () => {
+        const out = outputPath("image.epub")
+        const result = await run([IMAGE_FIXTURE, out])
+        assert.equal(result.code, 0, `stderr: ${result.stderr}`)
+        assert(await fileExists(out))
+        assert(await fileMinSize(out, 100000))
+        assert(await isZipWithEntry(out, "EPUB/document.xhtml"))
+        assert(await isZipWithEntry(out, "EPUB/images/image-91.png"))
+        assert(
+            await isZipWithXmlEntry(
+                out,
+                "EPUB/document.xhtml",
+                /src="images\/image-91\.png"/
+            )
+        )
+    })
+
+    it("fidus → jats with image", async () => {
+        const out = outputPath("image.jats.zip")
+        const result = await run([IMAGE_FIXTURE, out])
+        assert.equal(result.code, 0, `stderr: ${result.stderr}`)
+        assert(await fileExists(out))
+        assert(await fileMinSize(out, 100000))
+        assert(await isZipWithEntry(out, "manuscript.xml"))
+        assert(await isZipWithEntry(out, "image-91.png"))
+        assert(
+            await isZipWithXmlEntry(
+                out,
+                "manuscript.xml",
+                /xlink:href="image-91\.png"/
+            )
+        )
+    })
+
+    it("fidus → pandoc with image", async () => {
+        const out = outputPath("image.pandoc.json.zip")
+        const result = await run([IMAGE_FIXTURE, out])
+        assert.equal(result.code, 0, `stderr: ${result.stderr}`)
+        assert(await fileExists(out))
+        assert(await fileMinSize(out, 100000))
+        assert(await isZipWithEntry(out, "document.json"))
+        assert(await isZipWithEntry(out, "image-91.png"))
+        const buf = await readFile(out)
+        const zip = await JSZip.loadAsync(buf)
+        const json = JSON.parse(await zip.file("document.json")!.async("string"))
+        const findImages = (node: any): any[] => {
+            const results: any[] = []
+            if (node && typeof node === "object") {
+                if (node.t === "Image") {
+                    results.push(node)
+                }
+                const children = Array.isArray(node) ? node : Object.values(node)
+                children.forEach(child => results.push(...findImages(child)))
+            }
+            return results
+        }
+        const images = findImages(json)
+        assert.equal(images.length, 1)
+        assert.equal(images[0].c[images[0].c.length - 1][0], "image-91.png")
+    })
+
+    it("fidus → fidus preserves image", async () => {
+        const out = outputPath("image.fidus")
+        const result = await run([IMAGE_FIXTURE, out])
+        assert.equal(result.code, 0, `stderr: ${result.stderr}`)
+        assert(await fileExists(out))
+        assert(await fileMinSize(out, 100000))
+        assert(await isZipWithEntry(out, "document.json"))
+        assert(await isZipWithEntry(out, "images.json"))
+        assert(await isZipWithEntry(out, "images/91.png"))
+        const buf = await readFile(out)
+        const zip = await JSZip.loadAsync(buf)
+        const imagesJson = JSON.parse(await zip.file("images.json")!.async("string"))
+        assert.equal(imagesJson["91"].image, "images/91.png")
+    })
+
     it("fidus → docx with custom template", async () => {
         const out = outputPath("export-template.docx")
         const result = await run(["--docx-template", CLASSIC_DOCX, FIXTURE, out])

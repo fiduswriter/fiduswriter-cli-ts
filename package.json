@@ -40,7 +40,7 @@
         "access": "public"
     },
     "dependencies": {
-        "@fiduswriter/books-document": "^0.1.2",
+        "@fiduswriter/books-document": "^0.1.4",
         "@fiduswriter/document": "^0.2.4",
         "citeproc-plus": "^1.0.1",
         "commander": "^13.1.0",

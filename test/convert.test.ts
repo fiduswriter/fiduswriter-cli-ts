@@ -28,6 +28,11 @@ const MISSING_COMMENTS_FIXTURE = join(
     "test",
     "comments-missing.fidus"
 )
+const IMAGE_FIXTURE = join(
+    dirname(import.meta.dirname),
+    "test",
+    "doc-with-image.fidus"
+)
 const CLASSIC_DOCX = join(dirname(import.meta.dirname), "templates", "Classic.docx")
 const FREE_ODT = join(dirname(import.meta.dirname), "templates", "Free.odt")
 
@@ -128,6 +133,26 @@ describe("fidus → export formats", () => {
         assert(await fileExists(out))
         assert(await fileMinSize(out, 1000))
         assert(await isZipWithEntry(out, "word/document.xml"))
+    })
+
+    it("fidus → docx with image", async () => {
+        const out = outputPath("image.docx")
+        const result = await run([IMAGE_FIXTURE, out])
+        assert.equal(result.code, 0, `stderr: ${result.stderr}`)
+        assert(await fileExists(out))
+        assert(await fileMinSize(out, 100000))
+        assert(await isZipWithEntry(out, "word/document.xml"))
+        assert(await isZipWithEntry(out, "word/media/image-91.png"))
+    })
+
+    it("fidus → odt with image", async () => {
+        const out = outputPath("image.odt")
+        const result = await run([IMAGE_FIXTURE, out])
+        assert.equal(result.code, 0, `stderr: ${result.stderr}`)
+        assert(await fileExists(out))
+        assert(await fileMinSize(out, 100000))
+        assert(await isZipWithEntry(out, "content.xml"))
+        assert(await isZipWithEntry(out, "Pictures/image-91.png"))
     })
 
     it("fidus → docx with custom template", async () => {

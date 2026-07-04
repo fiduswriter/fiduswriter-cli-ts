@@ -19,12 +19,6 @@ export class CLIEpubExporter extends EpubExporter {
         this.styleSheets = []
     }
 
-    async process(): Promise<void> {
-        await super.process()
-        // Mathlive static assets are not available in the CLI environment.
-        this.includeZips = []
-    }
-
     download(blob: Blob): Promise<void> {
         return writeBlobToFile(blob, this.outputPath)
     }

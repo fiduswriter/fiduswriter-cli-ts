@@ -164,7 +164,7 @@ async function exportFromFidus(
 
     switch (toFormat) {
         case "fidus": {
-            const shrinker = new ShrinkFidus(doc as any, imageDB, bibDB, true)
+            const shrinker = new ShrinkFidus(doc as any, imageDB, bibDB)
             const {doc: shrunkDoc, shrunkImageDB, shrunkBibDB, httpIncludes} = await shrinker.init()
             const zipper = new ZipFidus(doc.id, shrunkDoc, shrunkImageDB, shrunkBibDB, httpIncludes, true, false, undefined)
             const blob = await zipper.init()

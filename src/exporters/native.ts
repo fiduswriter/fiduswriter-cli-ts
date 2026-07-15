@@ -12,7 +12,7 @@ export class CLIFidusExporter extends ExportFidusFile {
         includeTemplate: boolean,
         outputPath: string
     ) {
-        super(doc, bibDB, imageDB, includeTemplate, false, undefined, true)
+        super(doc, bibDB, imageDB, includeTemplate, false, undefined)
         this.outputPath = outputPath
     }
 

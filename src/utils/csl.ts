@@ -1,5 +1,4 @@
-import {createCSL} from "@fiduswriter/document/citations/create_csl"
-import {CSL} from "citeproc-plus"
+import {CSL, createCSL} from "citeproc-plus"
 import type {CSL as DocumentCSL} from "@fiduswriter/document"
 
 const DEFAULT_STYLE = "apa"
@@ -31,6 +30,6 @@ export async function loadCSL(styleName?: string): Promise<LoadedCSL> {
     }
 
     const style = await catalog.getStyle(resolvedName)
-    const csl = await createCSL({[resolvedName]: style})
+    const csl = createCSL({[resolvedName]: style})
     return {csl, styleName: resolvedName}
 }

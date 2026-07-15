@@ -13,7 +13,7 @@ export class CLIBookLatexExporter extends LatexBookExporter {
         book: Book,
         user: User,
         docList: DocumentListEntry[],
-        updated: any,
+        updated: Date,
         outputPath: string
     ) {
         super(schema, book, user, docList, updated)

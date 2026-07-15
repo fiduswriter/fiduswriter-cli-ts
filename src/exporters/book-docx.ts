@@ -18,7 +18,7 @@ export class CLIBookDocxExporter extends DOCXBookExporter {
         book: Book,
         user: User,
         docList: DocumentListEntry[],
-        updated: any,
+        updated: Date,
         outputPath: string,
         templateBlob: Blob
     ) {

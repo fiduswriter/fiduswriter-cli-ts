@@ -23,6 +23,7 @@ import type {
 } from "@fiduswriter/books-document"
 import type {
     FidusDoc,
+    FidusNode,
     ImageDBEntry,
     ImageDBEntries
 } from "@fiduswriter/document"
@@ -170,9 +171,8 @@ export async function readFidusBookFile(
 
         let title = docJson.title || ""
         if (!title) {
-            const firstChild = (
-                content as unknown as { content?: Array<Record<string, any>> }
-            ).content?.[0]
+            const firstChild = (content as unknown as {content?: FidusNode[]})
+                .content?.[0]
             if (firstChild?.content?.[0]?.text) {
                 title = firstChild.content[0].text
             }

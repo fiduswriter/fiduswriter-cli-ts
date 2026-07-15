@@ -20,7 +20,7 @@ export class CLIBookHtmlExporter extends HTMLBookExporter {
         book: Book,
         user: User,
         docList: DocumentListEntry[],
-        updated: any,
+        updated: number,
         outputPath: string,
         multiDoc = true
     ) {

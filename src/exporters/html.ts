@@ -2,6 +2,12 @@ import {HTMLExporter} from "@fiduswriter/document/exporter/html"
 import type {BibDB, CSL, ExportDoc, ImageDB} from "@fiduswriter/document"
 import {writeBlobToFile} from "../utils/file.js"
 
+type DocumentStyle = {
+    slug: string
+    contents: string
+    documentstylefile_set: Array<[string, string]>
+}
+
 export class CLIHtmlExporter extends HTMLExporter {
     outputPath: string
 
@@ -10,8 +16,8 @@ export class CLIHtmlExporter extends HTMLExporter {
         bibDB: BibDB,
         imageDB: ImageDB,
         csl: CSL,
-        updated: any,
-        documentStyles: any[],
+        updated: Date,
+        documentStyles: DocumentStyle[],
         outputPath: string
     ) {
         super(doc, bibDB, imageDB, csl, updated, documentStyles)

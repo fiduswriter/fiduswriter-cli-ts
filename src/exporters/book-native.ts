@@ -16,7 +16,7 @@ export class CLIBookNativeExporter extends NativeBookExporter {
         book: Book,
         user: User,
         documentList: DocumentListEntry[],
-        updated: any,
+        updated: Date,
         outputPath: string
     ) {
         super(schema, book, user, documentList, updated)

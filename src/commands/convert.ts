@@ -4,6 +4,7 @@ import {extname, join, resolve} from "node:path"
 import {tmpdir} from "node:os"
 import JSZip from "jszip"
 
+import type {FidusNode} from "@fiduswriter/document"
 import {ensureInit} from "../init.js"
 import {readFidusFile} from "../utils/fidus-reader.js"
 import {loadCSL} from "../utils/csl.js"
@@ -39,6 +40,25 @@ const FORMATS = [
 ] as const
 
 type Format = (typeof FORMATS)[number]
+
+interface ConvertOptions {
+    from?: string
+    to?: string
+    style?: string
+    docxTemplate?: string
+    odtTemplate?: string
+    jatsType?: string
+}
+
+interface ShrinkableDoc {
+    content: FidusNode
+    [key: string]: unknown
+}
+
+interface DocContent {
+    content: Array<{type: string; attrs?: Record<string, unknown>}>
+    attrs?: Record<string, unknown>
+}
 
 function addConvertOptions(cmd: Command): void {
     cmd
@@ -81,7 +101,7 @@ export function registerConvertCommand(program: Command): void {
 async function doConvert(
     inputPath: string,
     outputPath: string,
-    options: Record<string, any>
+    options: ConvertOptions
 ): Promise<void> {
     ensureInit()
 
@@ -154,7 +174,7 @@ async function exportFromFidus(
     fidusPath: string,
     outputPath: string,
     toFormat: Format,
-    options: Record<string, any>
+    options: ConvertOptions
 ): Promise<void> {
     const {doc, bibDB, imageDB} = await readFidusFile(fidusPath)
     const styleToUse = options.style || doc.settings.citationstyle || "apa"
@@ -164,7 +184,11 @@ async function exportFromFidus(
 
     switch (toFormat) {
         case "fidus": {
-            const shrinker = new ShrinkFidus(doc as any, imageDB, bibDB)
+            const shrinker = new ShrinkFidus(
+                doc as unknown as ShrinkableDoc,
+                imageDB,
+                bibDB
+            )
             const {doc: shrunkDoc, shrunkImageDB, shrunkBibDB, httpIncludes} = await shrinker.init()
             const zipper = new ZipFidus(doc.id, shrunkDoc, shrunkImageDB, shrunkBibDB, httpIncludes, true, false, undefined)
             const blob = await zipper.init()
@@ -172,19 +196,17 @@ async function exportFromFidus(
             break
         }
         case "docx": {
-            const docJson = doc.content as unknown as {content: any[]; attrs?: Record<string, any>}
             const templateBlob = options.docxTemplate
                 ? await loadDocxTemplate(options.docxTemplate)
-                : await generateDocxTemplate(docJson)
+                : await generateDocxTemplate(doc.content as unknown as DocContent)
             const exporter = new CLIDocxExporter(doc, "", bibDB, imageDB, csl, outputPath, templateBlob)
             await exporter.init()
             break
         }
         case "odt": {
-            const docJson = doc.content as unknown as {content: any[]; attrs?: Record<string, any>}
             const templateBlob = options.odtTemplate
                 ? await loadOdtTemplate(options.odtTemplate)
-                : await generateOdtTemplate(docJson)
+                : await generateOdtTemplate(doc.content as unknown as DocContent)
             const exporter = new CLIodtExporter(doc, "", bibDB, imageDB, csl, outputPath, templateBlob)
             await exporter.init()
             break

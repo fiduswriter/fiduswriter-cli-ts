@@ -9,6 +9,7 @@
     },
     "scripts": {
         "build": "tsc",
+        "typecheck": "tsc --noEmit",
         "prepare": "npm run build",
         "start": "node dist/bin/fidusconvert.js",
         "test": "tsx --test test/*.test.ts",

@@ -23,7 +23,7 @@ export class CLIBookJatsExporter extends BITSBookExporter {
         book: Book,
         user: User,
         docList: DocumentListEntry[],
-        updated: any,
+        updated: Date,
         outputPath: string
     ) {
         super(schema, csl, book, user, docList, updated)

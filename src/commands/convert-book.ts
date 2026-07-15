@@ -28,6 +28,15 @@ const OUTPUT_FORMATS = [
 type InputFormat = (typeof INPUT_FORMATS)[number]
 type OutputFormat = (typeof OUTPUT_FORMATS)[number]
 
+interface ConvertBookOptions {
+    from?: string
+    to?: string
+    style?: string
+    docxTemplate?: string
+    odtTemplate?: string
+    jatsType?: string
+}
+
 const CLI_USER = { id: 1, name: "CLI User", username: "cli" }
 
 export function registerConvertBookCommand(program: Command): void {
@@ -65,7 +74,7 @@ export function registerConvertBookCommand(program: Command): void {
 async function doConvertBook(
     inputPath: string,
     outputPath: string,
-    options: Record<string, any>
+    options: ConvertBookOptions
 ): Promise<void> {
     ensureInit()
 
@@ -107,7 +116,7 @@ async function exportBook(
     inputPath: string,
     outputPath: string,
     toFormat: OutputFormat,
-    options: Record<string, any>
+    options: ConvertBookOptions
 ): Promise<void> {
     const { book, documentList } = await readFidusBookFile(inputPath)
 

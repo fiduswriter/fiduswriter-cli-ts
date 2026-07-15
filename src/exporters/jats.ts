@@ -10,7 +10,7 @@ export class CLIJatsExporter extends JATSExporter {
         bibDB: BibDB,
         imageDB: ImageDB,
         csl: CSL,
-        updated: any,
+        updated: Date,
         jatsType: string,
         outputPath: string
     ) {

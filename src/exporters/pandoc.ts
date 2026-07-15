@@ -10,7 +10,7 @@ export class CLIPandocExporter extends PandocExporter {
         bibDB: BibDB,
         imageDB: ImageDB,
         csl: CSL,
-        updated: any,
+        updated: Date,
         outputPath: string
     ) {
         super(doc, bibDB, imageDB, csl, updated)

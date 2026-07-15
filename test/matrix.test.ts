@@ -177,25 +177,40 @@ function normalizeWhitespace(text: string): string {
     return text.replace(/\s+/g, " ").trim()
 }
 
-function pandocAstToPlain(doc: any): string {
+type PandocNode =
+    | null
+    | string
+    | number
+    | boolean
+    | PandocNode[]
+    | {t?: string; c?: PandocNode; [key: string]: PandocNode | undefined}
+
+type PmNode = {type?: string; text?: string; content?: PmNode[]}
+
+function pandocAstToPlain(doc: {
+    blocks?: PandocNode[]
+    pandoc?: {blocks?: PandocNode[]}
+}): string {
     const blocks = doc.blocks ?? doc.pandoc?.blocks ?? []
     return blocks.map(blockToPlain).join(" ")
 }
 
-function blockToPlain(block: any): string {
+function blockToPlain(block: PandocNode): string {
     if (!block) return ""
     if (Array.isArray(block)) {
         return block.map(blockToPlain).join(" ")
     }
-    if (block.t === "Str") return block.c ?? ""
-    if (block.t === "Space" || block.t === "SoftBreak") return " "
-    if (block.c && Array.isArray(block.c)) {
-        return block.c.map(blockToPlain).join(" ")
+    if (typeof block === "object") {
+        if (block.t === "Str") return (block.c as string | undefined) ?? ""
+        if (block.t === "Space" || block.t === "SoftBreak") return " "
+        if (block.c && Array.isArray(block.c)) {
+            return block.c.map(blockToPlain).join(" ")
+        }
     }
     return ""
 }
 
-function flattenProseMirror(node: any): string {
+function flattenProseMirror(node: PmNode): string {
     if (!node) return ""
     if (typeof node === "string") return node
     if (Array.isArray(node)) return node.map(flattenProseMirror).join(" ")

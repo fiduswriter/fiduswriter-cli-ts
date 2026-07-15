@@ -9,7 +9,7 @@ export class CLILatexExporter extends LatexExporter {
         doc: ExportDoc,
         bibDB: BibDB,
         imageDB: ImageDB,
-        updated: any,
+        updated: Date,
         outputPath: string
     ) {
         super(doc, bibDB, imageDB, updated)

@@ -54,7 +54,7 @@ function run(args: string[]): Promise<{stdout: string; stderr: string; code: num
             resolve({
                 stdout: stdout || "",
                 stderr: stderr || "",
-                code: err && "code" in err ? (err as any).code : 0
+                code: err && "code" in err ? (err as NodeJS.ErrnoException).code : 0
             })
         })
     })
@@ -234,10 +234,17 @@ describe("fidus → export formats", () => {
         const buf = await readFile(out)
         const zip = await JSZip.loadAsync(buf)
         const json = JSON.parse(await zip.file("document.json")!.async("string"))
-        const findImages = (node: any): any[] => {
-            const results: any[] = []
+        type PandocNode =
+            | null
+            | string
+            | number
+            | boolean
+            | PandocNode[]
+            | {t?: string; c?: PandocNode; [key: string]: PandocNode | undefined}
+        const findImages = (node: PandocNode): Array<{t?: string; c?: PandocNode}> => {
+            const results: Array<{t?: string; c?: PandocNode}> = []
             if (node && typeof node === "object") {
-                if (node.t === "Image") {
+                if (!Array.isArray(node) && node.t === "Image") {
                     results.push(node)
                 }
                 const children = Array.isArray(node) ? node : Object.values(node)
@@ -247,7 +254,8 @@ describe("fidus → export formats", () => {
         }
         const images = findImages(json)
         assert.equal(images.length, 1)
-        assert.equal(images[0].c[images[0].c.length - 1][0], "image-91.png")
+        const imageContent = images[0].c as PandocNode[]
+        assert.equal((imageContent[imageContent.length - 1] as PandocNode[])[0], "image-91.png")
     })
 
     it("fidus → fidus preserves image", async () => {
@@ -485,9 +493,12 @@ describe("edge cases", () => {
         const doc = JSON.parse(docText)
         const content = doc.content || doc
         const innerContent = content.content || content
-        const titleNode = Array.isArray(innerContent) ? innerContent.find((n: any) => n.type === "title") : null
+        type PmNode = {type?: string; text?: string; content?: PmNode[]}
+        const titleNode = Array.isArray(innerContent)
+            ? innerContent.find((n: PmNode) => n.type === "title")
+            : null
         assert.ok(titleNode, "title node not found")
-        assert.ok(titleNode.content.some((n: any) => n.text === "Test Document"))
+        assert.ok(titleNode!.content?.some((n: PmNode) => n.text === "Test Document"))
     })
 
     it("convert without subcommand still works (default command)", async () => {

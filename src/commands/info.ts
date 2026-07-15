@@ -5,6 +5,7 @@ import JSZip from "jszip"
 
 import {ensureInit} from "../init.js"
 import {FW_DOCUMENT_VERSION} from "@fiduswriter/document/schema"
+import type {FidusNode} from "@fiduswriter/document"
 
 export function registerInfoCommand(program: Command): void {
     program
@@ -51,7 +52,7 @@ async function doInfo(inputPath: string): Promise<void> {
                 console.log(`Citation Style: ${doc.attrs.citationstyle || "unknown"}`)
                 console.log(`Document Style: ${doc.attrs.documentstyle || "unknown"}`)
 
-                const parts = (doc.content || []).map((part: any) => part.type)
+                const parts = (doc.content || []).map((part: FidusNode) => part.type)
                 console.log(`Document Parts: ${parts.join(", ")}`)
             }
         } catch {

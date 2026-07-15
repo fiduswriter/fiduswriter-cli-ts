@@ -71,5 +71,13 @@
     "files": [
         "dist/",
         "templates/"
-    ]
+    ],
+    "lint-staged": {
+        "*.{ts,js,mjs,css,md,json,html}": [
+            "prettier --write"
+        ],
+        "*.{ts,js,mjs}": [
+            "eslint --fix"
+        ]
+    }
 }

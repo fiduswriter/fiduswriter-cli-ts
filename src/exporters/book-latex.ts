@@ -16,7 +16,7 @@ export class CLIBookLatexExporter extends LatexBookExporter {
         updated: Date,
         outputPath: string
     ) {
-        super(schema, book, user, docList, updated)
+        super(schema, book, user, docList, Math.floor(updated.getTime() / 1000))
         this.outputPath = outputPath
     }
 

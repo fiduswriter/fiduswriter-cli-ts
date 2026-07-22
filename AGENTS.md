@@ -64,22 +64,26 @@ Do **not** put in this repository:
 
 ```bash
 # Install dependencies
-npm install
+pnpm install
 
 # Compile TypeScript to dist/
-npm run build
+pnpm run build
 
 # Run the test suite
-npm test
+pnpm test
 
 # Run linting and formatting checks
-npm run lint
-npm run format:check
+pnpm run lint
+pnpm run format:check
 ```
+
+This repository uses pnpm for day-to-day development. Run `pnpm install` to
+install dependencies; `package-lock.json` is not tracked (pnpm maintains
+`pnpm-lock.yaml`).
 
 ## Pre-commit / pre-publish
 
-- `npm run prepare` runs `npm run build`.
+- `pnpm run prepare` runs `pnpm run build`.
 - `npm publish` triggers `prepublishOnly`, which also builds.
 - There is no pre-commit hook in this repository; rely on CI and run tests
   before committing.
@@ -116,7 +120,7 @@ resolves them from `@fiduswriter/document/static-libs/`.
 
 Tests live in `test/` and run with the Node test runner via `tsx`.
 
-- Use `npm test` to run the full suite.
+- Use `pnpm test` to run the full suite.
 - Tests cover conversion between many formats and round-trip fixtures.
 - Test fixtures are in `test/`.
 
@@ -131,12 +135,12 @@ When publishing a new version:
 
 - Ensure the latest `@fiduswriter/document` and `@fiduswriter/books-document`
   releases are reflected in `package.json`.
-- Run `npm test` before publishing.
+- Run `pnpm test` before publishing.
 
 ## Release checklist
 
-- Ensure `npm run build` succeeds.
-- Ensure `npm test` passes.
+- Ensure `pnpm run build` succeeds.
+- Ensure `pnpm test` passes.
 - Update `package.json` version if needed (`npm version patch|minor|major`).
 - `npm publish` triggers `prepublishOnly`, which builds.
 - Push commits and tags.

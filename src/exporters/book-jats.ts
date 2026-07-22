@@ -26,7 +26,7 @@ export class CLIBookJatsExporter extends BITSBookExporter {
         updated: Date,
         outputPath: string
     ) {
-        super(schema, csl, book, user, docList, updated)
+        super(schema, csl, book, user, docList, Math.floor(updated.getTime() / 1000))
         this.outputPath = outputPath
     }
 

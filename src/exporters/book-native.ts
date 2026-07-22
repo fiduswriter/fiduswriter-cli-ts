@@ -19,7 +19,7 @@ export class CLIBookNativeExporter extends NativeBookExporter {
         updated: Date,
         outputPath: string
     ) {
-        super(schema, book, user, documentList, updated)
+        super(schema, book, user, documentList, Math.floor(updated.getTime() / 1000))
         this.outputPath = outputPath
     }
 

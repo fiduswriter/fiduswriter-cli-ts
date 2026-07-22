@@ -22,7 +22,7 @@ export class CLIBookOdtExporter extends ODTBookExporter {
         outputPath: string,
         templateBlob: Blob
     ) {
-        super(schema, csl, book, user, docList, updated)
+        super(schema, csl, book, user, docList, Math.floor(updated.getTime() / 1000))
         this.outputPath = outputPath
         this.templateBlob = templateBlob
         this.templateUrl = TEMPLATE_SENTINEL

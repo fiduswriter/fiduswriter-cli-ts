@@ -46,7 +46,7 @@
         "@fiduswriter/document": "^0.2.23",
         "citeproc-plus": "^2.0.4",
         "commander": "^13.1.0",
-        "fwtoolkit": "^0.2.0",
+        "fwtoolkit": "^0.2.3",
         "happy-dom": "^20.10.6",
         "jszip": "^3.10.1",
         "prosemirror-commands": "^1.7.1",

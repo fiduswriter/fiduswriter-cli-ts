@@ -15,9 +15,9 @@
         "jats",
         "pandoc"
     ],
-    "homepage": "https://codeberg.org/fiduswriter/fiduswriter-cli-js#readme",
+    "homepage": "https://codeberg.org/fiduswriter/fiduswriter-cli-ts#readme",
     "bugs": {
-        "url": "https://codeberg.org/fiduswriter/fiduswriter-cli-js/issues"
+        "url": "https://codeberg.org/fiduswriter/fiduswriter-cli-ts/issues"
     },
     "repository": {
         "type": "git",

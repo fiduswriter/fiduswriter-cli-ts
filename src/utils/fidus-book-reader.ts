@@ -37,10 +37,16 @@ export interface FidusBookReadResult {
     documentList: DocumentListEntry[]
 }
 
-export const FIDUSBOOK_MIMETYPE = "application/fidusbook+zip"
-export const FIDUSBOOK_VERSION = "1.0"
+export const FIDUSBOOK_MIMETYPES = [
+    "application/fidusbook+zip",
+    "application/vnd.fiduswriter.book+zip"
+]
+/** The Fidus Writer book archive version tracks the document version. */
+export const FIDUSBOOK_VERSION = FW_DOCUMENT_VERSION
+// Legacy book archives used version 1.0 before the version was unified with
+// the document version; the upper bound is the document version.
 const MIN_FIDUSBOOK_VERSION = 1.0
-const MAX_FIDUSBOOK_VERSION = 1.0
+const MAX_FIDUSBOOK_VERSION = Number.parseFloat(FW_DOCUMENT_VERSION)
 
 const CURRENT_DOCUMENT_VERSION = Number.parseFloat(FW_DOCUMENT_VERSION)
 
@@ -90,9 +96,11 @@ export async function readFidusBookFile(
 
     // The mimetype file is present in archives produced by the native exporter;
     // if present it must match, but we do not hard-require it.
-    if (mimeTypeText && mimeTypeText !== FIDUSBOOK_MIMETYPE) {
+    if (mimeTypeText && !FIDUSBOOK_MIMETYPES.includes(mimeTypeText)) {
         throw new Error(
-            `Not a Fidusbook file. Expected mimetype "${FIDUSBOOK_MIMETYPE}", got "${mimeTypeText}"`
+            `Not a Fidusbook file. Expected mimetype "${FIDUSBOOK_MIMETYPES.join(
+                '" or "'
+            )}", got "${mimeTypeText}"`
         )
     }
 

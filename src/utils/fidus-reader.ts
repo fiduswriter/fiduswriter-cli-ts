@@ -15,6 +15,12 @@ export interface FidusReadResult {
 const MIN_FW_DOCUMENT_VERSION = 1.6
 const MAX_FW_DOCUMENT_VERSION = Number.parseFloat(FW_DOCUMENT_VERSION)
 
+/** Accepted `mimetype` entry values for `.fidus` files. */
+const FIDUS_MIMETYPES = [
+    "application/fidus+zip",
+    "application/vnd.fiduswriter+zip"
+]
+
 export async function readFidusFile(filePath: string): Promise<FidusReadResult> {
     const buffer = await readFile(filePath)
     const zip = await JSZip.loadAsync(buffer)
@@ -28,12 +34,12 @@ export async function readFidusFile(filePath: string): Promise<FidusReadResult> 
 
     const filetypeVersion = Number.parseFloat(filetypeVersionText)
     if (
-        mimeTypeText.trim() !== "application/fidus+zip" ||
+        !FIDUS_MIMETYPES.includes(mimeTypeText.trim()) ||
         filetypeVersion < MIN_FW_DOCUMENT_VERSION ||
         filetypeVersion > MAX_FW_DOCUMENT_VERSION
     ) {
         throw new Error(
-            `Not a supported Fidus Writer file. Expected mimetype application/fidus+zip with version ${MIN_FW_DOCUMENT_VERSION}-${MAX_FW_DOCUMENT_VERSION}, got mimetype "${mimeTypeText.trim()}" with version ${filetypeVersion}`
+            `Not a supported Fidus Writer file. Expected mimetype application/vnd.fiduswriter+zip or application/fidus+zip with version ${MIN_FW_DOCUMENT_VERSION}-${MAX_FW_DOCUMENT_VERSION}, got mimetype "${mimeTypeText.trim()}" with version ${filetypeVersion}`
         )
     }
 

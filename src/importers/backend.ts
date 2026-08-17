@@ -91,7 +91,7 @@ export class FilesystemNativeImporterBackend implements NativeImporterBackend {
         )
 
         const zip = new JSZip()
-        zip.file("mimetype", "application/fidus+zip", {compression: "STORE"})
+        zip.file("mimetype", "application/vnd.fiduswriter+zip", {compression: "STORE"})
         zip.file("filetype-version", FW_DOCUMENT_VERSION, {compression: "STORE"})
         zip.file("document.json", documentJson)
         zip.file("bibliography.json", bibliographyJson)
@@ -104,7 +104,7 @@ export class FilesystemNativeImporterBackend implements NativeImporterBackend {
 
         const blob = await zip.generateAsync({
             type: "nodebuffer",
-            mimeType: "application/fidus+zip"
+            mimeType: "application/vnd.fiduswriter+zip"
         })
 
         const outputPath = join(outputDir, `${slug}.fidus`)

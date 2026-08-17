@@ -1,6 +1,6 @@
 {
     "name": "@fiduswriter/cli",
-    "version": "0.1.19",
+    "version": "0.1.20",
     "description": "Command-line interface for Fidus Writer document conversion",
     "keywords": [
         "fiduswriter",

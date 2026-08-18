@@ -13,7 +13,7 @@ same import/export logic as the main Fidus Writer application through
 
 - Package name: `@fiduswriter/cli`
 - License: `AGPL-3.0-or-later`
-- Repository: `https://codeberg.org/fiduswriter/fiduswriter-cli.git`
+- Repository: `https://git.fiduswriter.org/fiduswriter/fiduswriter-cli-ts.git`
 - Author: Johannes Wilm
 
 ## Scope

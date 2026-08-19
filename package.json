@@ -63,13 +63,14 @@
     "devDependencies": {
         "@eslint/js": "^10.0.1",
         "@types/node": "^24.0.0",
+        "@typescript/native": "npm:typescript@^7.0.2",
         "eslint": "^10.6.0",
         "fast-xml-parser": "^5.9.3",
         "globals": "^17.0.0",
         "prettier": "^3.8.5",
         "tsx": "^4.22.4",
-        "typescript": "^7.0.0",
-        "typescript-eslint": "^8.62.0",
+        "typescript": "npm:@typescript/typescript6@^6.0.2",
+        "typescript-eslint": "^8.67.0",
         "husky": "^9.1.7",
         "lint-staged": "^17.0.8"
     },

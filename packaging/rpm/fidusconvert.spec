@@ -5,7 +5,7 @@ Summary:        Command-line tool for Fidus Writer document conversion
 
 License:        AGPL-3.0-or-later
 URL:            https://fiduswriter.org
-Source0:        https://codeberg.org/fiduswriter/fiduswriter-cli/archive/v%{version}.tar.gz
+Source0:        https://git.fiduswriter.org/fiduswriter/fiduswriter-cli-ts/archive/v%{version}.tar.gz
 
 BuildArch:      noarch
 BuildRequires:  nodejs >= 18, npm, typescript
@@ -17,7 +17,7 @@ Fidus Writer (.fidus) document format and various other formats including
 DOCX, ODT, LaTeX, HTML, EPUB, JATS, and Pandoc JSON.
 
 %prep
-%autosetup -n fiduswriter-cli
+%autosetup -n fiduswriter-cli-ts
 
 %build
 npm install

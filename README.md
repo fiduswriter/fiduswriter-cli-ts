@@ -1,11 +1,11 @@
 # @fiduswriter/cli
 
-<p align="center"><img src="https://codeberg.org/fiduswriter/fiduswriter-cli/raw/branch/main/logo.svg" alt="fidusconvert logo" width="100" height="100"></p>
+<p align="center"><img src="https://git.fiduswriter.org/fiduswriter/fiduswriter-cli-ts/raw/branch/main/logo.svg" alt="fidusconvert logo" width="100" height="100"></p>
 
 Command-line tool for converting documents between
 [Fidus Writer](https://fiduswriter.org) native format (`.fidus`) and other
 document formats. Built on top of
-[@fiduswriter/document](https://codeberg.org/fiduswriter/fiduswriter-document).
+[@fiduswriter/document](https://git.fiduswriter.org/fiduswriter/fiduswriter-document-ts).
 
 ## Install
 
@@ -109,8 +109,8 @@ all files inside the `.fidus` archive.
 
 ## Dependencies
 
-- [@fiduswriter/document](https://codeberg.org/fiduswriter/fiduswriter-document) — document schema, importers and exporters
-- [fwtoolkit](https://codeberg.org/fiduswriter/fwtoolkit) — shared utilities
+- [@fiduswriter/document](https://git.fiduswriter.org/fiduswriter/fiduswriter-document-ts) — document schema, importers and exporters
+- [fwtoolkit](https://git.fiduswriter.org/fiduswriter/fwtoolkit) — shared utilities
 
 ## Development
 

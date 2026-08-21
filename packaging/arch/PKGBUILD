@@ -8,17 +8,17 @@ url="https://fiduswriter.org"
 license=('AGPL3')
 depends=('nodejs>=18' 'npm')
 makedepends=('typescript')
-source=("$pkgname-$pkgver.tar.gz::https://codeberg.org/fiduswriter/fiduswriter-cli/archive/v$pkgver.tar.gz")
+source=("$pkgname-$pkgver.tar.gz::https://git.fiduswriter.org/fiduswriter/fiduswriter-cli-ts/archive/v$pkgver.tar.gz")
 sha256sums=('SKIP')
 
 build() {
-    cd "$srcdir/fiduswriter-cli"
+    cd "$srcdir/fiduswriter-cli-ts"
     npm install
     npm run build
 }
 
 package() {
-    cd "$srcdir/fiduswriter-cli"
+    cd "$srcdir/fiduswriter-cli-ts"
 
     install -d "$pkgdir/usr/lib/node_modules/@fiduswriter/cli"
     cp -r dist templates package.json "$pkgdir/usr/lib/node_modules/@fiduswriter/cli/"

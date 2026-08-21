@@ -1,7 +1,7 @@
 class Fidusconvert < Formula
   desc "Command-line tool for Fidus Writer document conversion"
   homepage "https://fiduswriter.org"
-  url "https://codeberg.org/fiduswriter/fiduswriter-cli/archive/v0.1.0.tar.gz"
+  url "https://git.fiduswriter.org/fiduswriter/fiduswriter-cli-ts/archive/v0.1.0.tar.gz"
   sha256 "SKIP"
   license "AGPL-3.0-or-later"
 

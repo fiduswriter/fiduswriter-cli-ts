@@ -14,8 +14,8 @@ npm install -g @fiduswriter/cli
 ## From source
 
 ```bash
-git clone ssh://git@codeberg.org/fiduswriter/fiduswriter-cli.git
-cd fiduswriter-cli
+git clone ssh://git@git.fiduswriter.org/fiduswriter/fiduswriter-cli-ts.git
+cd fiduswriter-cli-ts
 npm install
 npm run build
 npm link

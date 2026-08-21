@@ -1,6 +1,6 @@
 {
     "name": "@fiduswriter/cli",
-    "version": "0.1.20",
+    "version": "0.1.21",
     "description": "Command-line interface for Fidus Writer document conversion",
     "keywords": [
         "fiduswriter",
@@ -47,10 +47,10 @@
     },
     "dependencies": {
         "@fiduswriter/books-document": "^0.1.7",
-        "@fiduswriter/document": "^0.2.23",
+        "@fiduswriter/document": "^0.3.3",
         "citeproc-plus": "^2.0.4",
         "commander": "^15.0.0",
-        "fwtoolkit": "^0.2.3",
+        "fwtoolkit": "^0.2.11",
         "happy-dom": "^20.10.6",
         "jszip": "^3.10.1",
         "prosemirror-commands": "^1.7.1",
@@ -67,12 +67,12 @@
         "eslint": "^10.6.0",
         "fast-xml-parser": "^5.9.3",
         "globals": "^17.0.0",
+        "husky": "^9.1.7",
+        "lint-staged": "^17.0.8",
         "prettier": "^3.8.5",
         "tsx": "^4.22.4",
         "typescript": "npm:@typescript/typescript6@^6.0.2",
-        "typescript-eslint": "^8.67.0",
-        "husky": "^9.1.7",
-        "lint-staged": "^17.0.8"
+        "typescript-eslint": "^8.67.0"
     },
     "engines": {
         "node": ">=18.0.0"

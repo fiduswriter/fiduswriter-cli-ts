@@ -42,7 +42,12 @@ export class FilesystemNativeImporterBackend implements NativeImporterBackend {
         let counter = 1
 
         for (const [id, entry] of Object.entries(images.db)) {
-            const imageValue = entry.image
+            // The importer (GetImages) stores the decoded image bytes on
+            // `entry.file` (a Blob/File). `entry.image` holds the original
+            // source reference (e.g. a DOCX media filename) and is not
+            // necessarily binary data, so it must not be used as the byte
+            // source.
+            const imageValue = entry.file ?? entry.image
             if (!imageValue) continue
 
             let blob: Blob
@@ -56,8 +61,14 @@ export class FilesystemNativeImporterBackend implements NativeImporterBackend {
 
             const ext = (entry.file_type as string | undefined) || blob.type.split("/")[1] || "bin"
             const filename = `image-${id}.${ext}`
-            this.images[id] = {filename, blob}
-            translationTable[id] = counter++
+            // Store the image under the translated id: the native importer
+            // rewrites the document's image node references to the values of
+            // the translation table (1, 2, …), so images.json keys must match
+            // those ids or the fidus file ends up with dangling references.
+            const newId = counter
+            this.images[String(newId)] = {filename, blob}
+            translationTable[id] = newId
+            counter++
         }
 
         return translationTable

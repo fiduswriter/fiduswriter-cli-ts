@@ -48,6 +48,7 @@ interface ConvertOptions {
     docxTemplate?: string
     odtTemplate?: string
     jatsType?: string
+    mathOutput?: string
 }
 
 interface ShrinkableDoc {
@@ -79,6 +80,11 @@ function addConvertOptions(cmd: Command): void {
         .option("--docx-template <path>", "Custom DOCX template file")
         .option("--odt-template <path>", "Custom ODT template file")
         .option("--jats-type <type>", "JATS type: article, book-part-wrapper, book", "article")
+        .option(
+            "--math-output <mathml|svg>",
+            "Math output for HTML/EPUB export: MathML (default) or SVG",
+            "mathml"
+        )
 }
 
 export function registerConvertCommand(program: Command): void {
@@ -96,6 +102,17 @@ export function registerConvertCommand(program: Command): void {
     convertCmd.action(async (input, output, options) => {
         await doConvert(input, output, options)
     })
+}
+
+function mathOutputFromOptions(options: ConvertOptions): "mathml" | "svg" {
+    const value = options.mathOutput || "mathml"
+    if (value !== "mathml" && value !== "svg") {
+        console.error(
+            `Invalid --math-output value "${value}". Use "mathml" or "svg".`
+        )
+        process.exit(1)
+    }
+    return value
 }
 
 async function doConvert(
@@ -217,12 +234,30 @@ async function exportFromFidus(
             break
         }
         case "html": {
-            const exporter = new CLIHtmlExporter(doc, bibDB, imageDB, csl, updated, [], outputPath)
+            const exporter = new CLIHtmlExporter(
+                doc,
+                bibDB,
+                imageDB,
+                csl,
+                updated,
+                [],
+                outputPath,
+                {mathOutput: mathOutputFromOptions(options)}
+            )
             await exporter.init()
             break
         }
         case "epub": {
-            const exporter = new CLIEpubExporter(doc, bibDB, imageDB, csl, updated, [], outputPath)
+            const exporter = new CLIEpubExporter(
+                doc,
+                bibDB,
+                imageDB,
+                csl,
+                updated,
+                [],
+                outputPath,
+                {mathOutput: mathOutputFromOptions(options)}
+            )
             await exporter.init()
             break
         }

@@ -93,6 +93,7 @@ all files inside the `.fidus` archive.
 | `--docx-template <path>` | Custom DOCX template file |
 | `--odt-template <path>` | Custom ODT template file |
 | `--jats-type <type>` | JATS type: `article`, `book-part-wrapper`, `book` (default: `article`) |
+| `--math-output <mathml\|svg>` | Math output for HTML/EPUB export: `mathml` (default) or `svg` |
 
 ## Supported formats
 

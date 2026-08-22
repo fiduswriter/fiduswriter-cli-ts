@@ -18,9 +18,10 @@ export class CLIHtmlExporter extends HTMLExporter {
         csl: CSL,
         updated: Date,
         documentStyles: DocumentStyle[],
-        outputPath: string
+        outputPath: string,
+        converterOptions: Record<string, unknown> = {}
     ) {
-        super(doc, bibDB, imageDB, csl, updated, documentStyles)
+        super(doc, bibDB, imageDB, csl, updated, documentStyles, converterOptions)
         this.outputPath = outputPath
         this.styleSheets = []
     }

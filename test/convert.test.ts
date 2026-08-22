@@ -347,6 +347,45 @@ describe("fidus → export formats", () => {
     })
 })
 
+describe("--math-output option", () => {
+    it("html export defaults to MathML", async () => {
+        const out = outputPath("math-mathml.html.zip")
+        const result = await run([IMAGE_FIXTURE, out])
+        assert.equal(result.code, 0, `stderr: ${result.stderr}`)
+        assert(await isZipWithXmlEntry(out, "document.html", /<math/))
+    })
+
+    it("html export with --math-output svg renders equations as SVG images", async () => {
+        const out = outputPath("math-svg.html.zip")
+        const result = await run([IMAGE_FIXTURE, out, "--math-output", "svg"])
+        assert.equal(result.code, 0, `stderr: ${result.stderr}`)
+        assert(await isZipWithXmlEntry(out, "document.html", /equation-svg/))
+        assert(
+            !(await isZipWithXmlEntry(out, "document.html", /<math/)),
+            "SVG output should not contain MathML"
+        )
+    })
+
+    it("epub export with --math-output svg renders equations as SVG images", async () => {
+        const out = outputPath("math-svg.epub")
+        const result = await run([IMAGE_FIXTURE, out, "--math-output", "svg"])
+        assert.equal(result.code, 0, `stderr: ${result.stderr}`)
+        assert(
+            await isZipWithXmlEntry(
+                out,
+                "EPUB/document.xhtml",
+                /equation-svg/
+            )
+        )
+    })
+
+    it("rejects an invalid --math-output value", async () => {
+        const out = outputPath("math-invalid.html.zip")
+        const result = await run([IMAGE_FIXTURE, out, "--math-output", "bogus"])
+        assert.notEqual(result.code, 0)
+    })
+})
+
 describe("docx/odt → fidus → export (round-trip)", () => {
     it("fidus → docx → fidus", async () => {
         const docxPath = outputPath("rt1.docx")

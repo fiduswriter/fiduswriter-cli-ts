@@ -94,6 +94,7 @@ all files inside the `.fidus` archive.
 | `--odt-template <path>` | Custom ODT template file |
 | `--jats-type <type>` | JATS type: `article`, `book-part-wrapper`, `book` (default: `article`) |
 | `--math-output <mathml\|svg>` | Math output for HTML/EPUB export: `mathml` (default) or `svg` |
+| `--tracked-changes <resolve\|include>` | Tracked changes for HTML/EPUB/DOCX/ODT export: `resolve` (accept all, default) or `include` them. Formats that cannot represent tracked changes (LaTeX, JATS, Pandoc) always resolve them. |
 
 ## Supported formats
 

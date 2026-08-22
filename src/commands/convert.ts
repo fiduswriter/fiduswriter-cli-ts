@@ -3,8 +3,9 @@ import {mkdtemp, readFile, rm, writeFile} from "node:fs/promises"
 import {extname, join, resolve} from "node:path"
 import {tmpdir} from "node:os"
 import JSZip from "jszip"
+import {Node as PMNode} from "prosemirror-model"
 
-import type {FidusNode} from "@fiduswriter/document"
+import type {ExportDoc, FidusNode} from "@fiduswriter/document"
 import {ensureInit} from "../init.js"
 import {readFidusFile} from "../utils/fidus-reader.js"
 import {loadCSL} from "../utils/csl.js"
@@ -17,6 +18,8 @@ import {OdtImporter} from "@fiduswriter/document/importer/odt"
 import {PandocImporter} from "@fiduswriter/document/importer/pandoc"
 import {ShrinkFidus} from "@fiduswriter/document/exporter/native/shrink"
 import {ZipFidus} from "@fiduswriter/document/exporter/native/zip"
+import {acceptAllNoInsertions} from "@fiduswriter/document/transform"
+import {docSchema} from "@fiduswriter/document/schema/document/index"
 
 import {FilesystemNativeImporterBackend} from "../importers/backend.js"
 import {getDefaultTemplate} from "../utils/default-template.js"
@@ -49,6 +52,7 @@ interface ConvertOptions {
     odtTemplate?: string
     jatsType?: string
     mathOutput?: string
+    trackedChanges?: string
 }
 
 interface ShrinkableDoc {
@@ -85,6 +89,11 @@ function addConvertOptions(cmd: Command): void {
             "Math output for HTML/EPUB export: MathML (default) or SVG",
             "mathml"
         )
+        .option(
+            "--tracked-changes <resolve|include>",
+            "How to handle tracked changes in HTML/EPUB/DOCX/ODT export: resolve (accept all, default) or include them in the output. Other formats always resolve tracked changes.",
+            "resolve"
+        )
 }
 
 export function registerConvertCommand(program: Command): void {
@@ -113,6 +122,48 @@ function mathOutputFromOptions(options: ConvertOptions): "mathml" | "svg" {
         process.exit(1)
     }
     return value
+}
+
+// Formats whose output can represent tracked changes; the `--tracked-changes`
+// option applies to these. Formats that cannot represent them always resolve
+// (merge) the changes before exporting.
+const TRACK_CAPABLE_FORMATS: Format[] = ["html", "epub", "docx", "odt"]
+const ALWAYS_RESOLVE_FORMATS: Format[] = ["latex", "jats", "pandoc"]
+
+function trackedChangesFromOptions(
+    options: ConvertOptions
+): "resolve" | "include" {
+    const value = options.trackedChanges || "resolve"
+    if (value !== "resolve" && value !== "include") {
+        console.error(
+            `Invalid --tracked-changes value "${value}". Use "resolve" or "include".`
+        )
+        process.exit(1)
+    }
+    return value
+}
+
+/** Return a copy of the document with all tracked changes accepted. */
+function resolveDocTrackedChanges(doc: ExportDoc): ExportDoc {
+    const pmDoc = PMNode.fromJSON(docSchema as never, doc.content as never)
+    const resolved = acceptAllNoInsertions(pmDoc)
+    return {...doc, content: resolved.toJSON() as never}
+}
+
+/** Converter options for HTML/EPUB export: SVG math when requested, and
+    `trackChanges: true` so kept tracked changes are actually rendered. */
+function htmlConverterOptions(
+    options: ConvertOptions,
+    trackedChanges: "resolve" | "include"
+): Record<string, unknown> {
+    const converterOptions: Record<string, unknown> = {}
+    if (mathOutputFromOptions(options) === "svg") {
+        converterOptions.mathOutput = "svg"
+    }
+    if (trackedChanges === "include") {
+        converterOptions.trackChanges = true
+    }
+    return converterOptions
 }
 
 async function doConvert(
@@ -193,9 +244,19 @@ async function exportFromFidus(
     toFormat: Format,
     options: ConvertOptions
 ): Promise<void> {
-    const {doc, bibDB, imageDB} = await readFidusFile(fidusPath)
-    const styleToUse = options.style || doc.settings.citationstyle || "apa"
+    const {doc: readDoc, bibDB, imageDB} = await readFidusFile(fidusPath)
+    const styleToUse = options.style || readDoc.settings.citationstyle || "apa"
     const {csl, styleName} = await loadCSL(styleToUse)
+    // Formats that can represent tracked changes honour `--tracked-changes`;
+    // the others always merge them since their output cannot show them.
+    const trackedChanges = trackedChangesFromOptions(options)
+    const shouldResolveTrackedChanges =
+        ALWAYS_RESOLVE_FORMATS.includes(toFormat) ||
+        (TRACK_CAPABLE_FORMATS.includes(toFormat) &&
+            trackedChanges === "resolve")
+    const doc = shouldResolveTrackedChanges
+        ? resolveDocTrackedChanges(readDoc)
+        : readDoc
     doc.settings.citationstyle = styleName
     const updated = new Date()
 
@@ -242,7 +303,7 @@ async function exportFromFidus(
                 updated,
                 [],
                 outputPath,
-                {mathOutput: mathOutputFromOptions(options)}
+                htmlConverterOptions(options, trackedChanges)
             )
             await exporter.init()
             break
@@ -256,7 +317,7 @@ async function exportFromFidus(
                 updated,
                 [],
                 outputPath,
-                {mathOutput: mathOutputFromOptions(options)}
+                htmlConverterOptions(options, trackedChanges)
             )
             await exporter.init()
             break

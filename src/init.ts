@@ -13,19 +13,38 @@ export function getPackageDir(): string {
     return dirname(dirname(fileURLToPath(import.meta.url)))
 }
 
+function getDocumentRoot(): string {
+    // Resolve the package root from the main entry point (dist/index.js).
+    const mainUrl = import.meta.resolve("@fiduswriter/document")
+    return resolve(dirname(fileURLToPath(mainUrl)), "..")
+}
+
 function getDocumentStaticDir(): string {
     if (documentStaticDir) {
         return documentStaticDir
     }
-    // Resolve the package root from the main entry point (dist/index.js).
-    const mainUrl = import.meta.resolve("@fiduswriter/document")
-    documentStaticDir = resolve(dirname(fileURLToPath(mainUrl)), "..", "static-libs")
+    documentStaticDir = resolve(getDocumentRoot(), "static-libs")
     return documentStaticDir
 }
 
 function resolveStaticUrl(path: string): string {
     // Leave absolute URLs and data URIs untouched.
     if (/^(https?:|file:|\/|data:)/i.test(path)) {
+        return path
+    }
+    // CSS shipped by @fiduswriter/document lives in the package's css/
+    // directory (served as css/document/... in the main app). The document
+    // exporters reference it as css/document/..., so map that to the css/
+    // directory of the installed package.
+    if (path.startsWith("css/document/")) {
+        const filePath = resolve(
+            getDocumentRoot(),
+            "css",
+            path.slice("css/document/".length)
+        )
+        if (existsSync(filePath)) {
+            return pathToFileURL(filePath).href
+        }
         return path
     }
     const staticDir = getDocumentStaticDir()
@@ -38,7 +57,21 @@ function resolveStaticUrl(path: string): string {
 
 async function fileFetch(url: string): Promise<Response> {
     const buffer = await readFile(fileURLToPath(url))
-    return new Response(new Blob([buffer]), {status: 200, statusText: "OK"})
+    // Return the raw bytes through blob() (like stubResponse in
+    // exporters/book-template.ts) so jszip can write binary assets (e.g. the
+    // bundled fallback fonts) without relying on a browser FileReader.
+    return {
+        ok: true,
+        status: 200,
+        statusText: "OK",
+        text: async () => new TextDecoder().decode(buffer),
+        blob: async () => buffer,
+        arrayBuffer: async () =>
+            buffer.buffer.slice(
+                buffer.byteOffset,
+                buffer.byteOffset + buffer.byteLength
+            )
+    } as unknown as Response
 }
 
 function ensureFileFetch(): void {

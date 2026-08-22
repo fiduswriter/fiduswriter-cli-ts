@@ -386,6 +386,79 @@ describe("--math-output option", () => {
     })
 })
 
+describe("--tracked-changes option", () => {
+    // IMAGE_FIXTURE (doc-with-image.fidus) contains tracked changes.
+    it("html export resolves tracked changes by default", async () => {
+        const out = outputPath("track-resolve.html.zip")
+        const result = await run([IMAGE_FIXTURE, out])
+        assert.equal(result.code, 0, `stderr: ${result.stderr}`)
+        assert(
+            !(await isZipWithXmlEntry(
+                out,
+                "document.html",
+                /class="insertion"/
+            )),
+            "default HTML export should have tracked changes resolved"
+        )
+    })
+
+    it("html export with --tracked-changes include keeps them", async () => {
+        const out = outputPath("track-include.html.zip")
+        const result = await run([
+            IMAGE_FIXTURE,
+            out,
+            "--tracked-changes",
+            "include"
+        ])
+        assert.equal(result.code, 0, `stderr: ${result.stderr}`)
+        assert(
+            await isZipWithXmlEntry(out, "document.html", /class="insertion"/),
+            "include HTML export should render tracked changes"
+        )
+    })
+
+    it("docx export with --tracked-changes include keeps them", async () => {
+        const out = outputPath("track-include.docx")
+        const result = await run([
+            IMAGE_FIXTURE,
+            out,
+            "--tracked-changes",
+            "include"
+        ])
+        assert.equal(result.code, 0, `stderr: ${result.stderr}`)
+        assert(
+            await isZipWithXmlEntry(out, "word/document.xml", /<w:ins[ >]/),
+            "include DOCX export should contain tracked-change insertions"
+        )
+    })
+
+    it("odt export with --tracked-changes include keeps them", async () => {
+        const out = outputPath("track-include.odt")
+        const result = await run([
+            IMAGE_FIXTURE,
+            out,
+            "--tracked-changes",
+            "include"
+        ])
+        assert.equal(result.code, 0, `stderr: ${result.stderr}`)
+        assert(
+            await isZipWithXmlEntry(out, "content.xml", /<text:insertion/),
+            "include ODT export should contain tracked-change insertions"
+        )
+    })
+
+    it("rejects an invalid --tracked-changes value", async () => {
+        const out = outputPath("track-invalid.html.zip")
+        const result = await run([
+            IMAGE_FIXTURE,
+            out,
+            "--tracked-changes",
+            "bogus"
+        ])
+        assert.notEqual(result.code, 0)
+    })
+})
+
 describe("docx/odt → fidus → export (round-trip)", () => {
     it("fidus → docx → fidus", async () => {
         const docxPath = outputPath("rt1.docx")

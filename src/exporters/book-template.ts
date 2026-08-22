@@ -9,11 +9,13 @@
  * jszip-readable `Uint8Array`.  All other requests pass through unchanged and
  * the original `fetch` is restored afterwards.
  *
- * The HTML/EPUB exporters resolve stylesheet URLs (e.g. `css/document.css`)
- * through `staticUrl` and then `fetch` them.  There is no web server hosting
- * those assets in the CLI, so `runWithStubbedAssets` returns empty content for
- * any relative/unfetchable URL while letting absolute (`http(s):`, `data:`)
- * URLs through.
+ * The HTML/EPUB exporters resolve stylesheet URLs (e.g.
+ * `css/document/document.css`) through `staticUrl` and then `fetch` them. In
+ * the CLI, `staticUrl` resolves `@fiduswriter/document`'s stylesheets and
+ * fonts to `file:` URLs pointing into the installed package, which the
+ * `file:`-aware fetch in init.ts can read. `runWithStubbedAssets` therefore
+ * only needs to stub truly unfetchable relative URLs while letting absolute
+ * (`http(s):`, `file:`, `data:`) URLs through.
  */
 
 function urlOf(input: RequestInfo | URL): string {
@@ -78,7 +80,8 @@ export async function runWithStubbedAssets<T>(
         init?: RequestInit
     ): Promise<Response> => {
         const url = urlOf(input)
-        // Relative asset paths (css/document.css, css/book.css, ...) cannot be
+        // Relative asset paths that staticUrl could not resolve (e.g. custom
+        // document-style files with no backend to serve them) cannot be
         // fetched: there is no server. Return empty content for them.
         if (!isAbsoluteUrl(url)) {
             return stubResponse()

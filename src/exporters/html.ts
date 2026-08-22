@@ -23,7 +23,9 @@ export class CLIHtmlExporter extends HTMLExporter {
     ) {
         super(doc, bibDB, imageDB, csl, updated, documentStyles, converterOptions)
         this.outputPath = outputPath
-        this.styleSheets = []
+        // Keep the default stylesheet ({url: staticUrl("css/document/document.css")}):
+        // init.ts's staticUrl resolves it to a file: URL in the installed
+        // @fiduswriter/document package, so it can be fetched and shipped.
     }
 
     download(blob: Blob): Promise<void> {

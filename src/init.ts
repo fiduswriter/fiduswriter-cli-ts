@@ -19,6 +19,12 @@ function getDocumentRoot(): string {
     return resolve(dirname(fileURLToPath(mainUrl)), "..")
 }
 
+function getBooksDocumentRoot(): string {
+    // Resolve the package root from the main entry point (dist/index.js).
+    const mainUrl = import.meta.resolve("@fiduswriter/books-document")
+    return resolve(dirname(fileURLToPath(mainUrl)), "..")
+}
+
 function getDocumentStaticDir(): string {
     if (documentStaticDir) {
         return documentStaticDir
@@ -42,6 +48,15 @@ function resolveStaticUrl(path: string): string {
             "css",
             path.slice("css/document/".length)
         )
+        if (existsSync(filePath)) {
+            return pathToFileURL(filePath).href
+        }
+        return path
+    }
+    // css/book.css is shipped by @fiduswriter/books-document (served at
+    // /static/css/book.css in the main app).
+    if (path.startsWith("css/book.css")) {
+        const filePath = resolve(getBooksDocumentRoot(), "css", "book.css")
         if (existsSync(filePath)) {
             return pathToFileURL(filePath).href
         }

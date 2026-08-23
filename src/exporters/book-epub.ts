@@ -25,8 +25,9 @@ export class CLIBookEpubExporter extends EpubBookExporter {
     ) {
         super(schema, csl, bookStyles, book, user, docList, updated)
         this.outputPath = outputPath
-        // No web server hosts the book stylesheet in the CLI.
-        this.styleSheets = []
+        // Keep the default stylesheets (document.css + book.css): init.ts's
+        // staticUrl resolves them to file: URLs in the installed packages, so
+        // they can be fetched and shipped.
     }
 
     init(): Promise<Blob | false> {

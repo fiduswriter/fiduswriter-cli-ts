@@ -28,9 +28,9 @@ export class CLIBookHtmlExporter extends HTMLBookExporter {
             relativeUrls: true
         })
         this.outputPath = outputPath
-        // No web server hosts the book/document stylesheets in the CLI, so we
-        // export without external stylesheet links.
-        this.styleSheets = []
+        // Keep the default stylesheets (document.css + book.css): init.ts's
+        // staticUrl resolves them to file: URLs in the installed packages, so
+        // they can be fetched and shipped.
     }
 
     init(): Promise<Blob | false | void> {

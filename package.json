@@ -47,7 +47,7 @@
     },
     "dependencies": {
         "@fiduswriter/books-document": "^0.1.22",
-        "@fiduswriter/document": "^0.3.12",
+        "@fiduswriter/document": "^0.3.13",
         "citeproc-plus": "^2.0.4",
         "commander": "^15.0.0",
         "fwtoolkit": "^0.2.19",

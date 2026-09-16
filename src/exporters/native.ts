@@ -16,7 +16,8 @@ export class CLIFidusExporter extends ExportFidusFile {
         this.outputPath = outputPath
     }
 
-    download(blob: Blob): Promise<void> {
-        return writeBlobToFile(blob, this.outputPath)
+    async download(blob: Blob): Promise<boolean> {
+        await writeBlobToFile(blob, this.outputPath)
+        return true
     }
 }

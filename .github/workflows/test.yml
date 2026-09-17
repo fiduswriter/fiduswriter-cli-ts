@@ -17,8 +17,15 @@ jobs:
 
             - name: Install Pandoc
               run: |
-                  sudo apt-get update
-                  sudo apt-get install -y pandoc
+                  # Forgejo runners execute jobs in containers without sudo,
+                  # so install directly when running as root.
+                  if [ "$(id -u)" = "0" ]; then
+                      apt-get update
+                      apt-get install -y pandoc
+                  else
+                      sudo apt-get update
+                      sudo apt-get install -y pandoc
+                  fi
 
             - uses: pnpm/action-setup@v4
 

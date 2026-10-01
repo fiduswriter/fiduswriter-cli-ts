@@ -2,6 +2,5 @@ onlyBuiltDependencies:
   - core-js
   - es5-ext
 overrides:
-  '@babel/polyfill': '-'
   '@xmldom/xmldom': 0.9.12
   'glob@^10.5.0': ^13.0.6

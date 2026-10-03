@@ -1,3 +1,4 @@
+minimumReleaseAge: 0
 onlyBuiltDependencies:
   - core-js
   - es5-ext

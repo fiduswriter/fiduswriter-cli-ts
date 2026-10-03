@@ -46,33 +46,33 @@
         "access": "public"
     },
     "dependencies": {
-        "@fiduswriter/books-document": "^0.1.25",
-        "@fiduswriter/document": "^0.3.17",
+        "@fiduswriter/books-document": "^0.1.29",
+        "@fiduswriter/document": "^0.3.19",
         "citeproc-plus": "^2.0.4",
         "commander": "^15.0.0",
         "fwtoolkit": "^0.2.26",
-        "happy-dom": "^20.10.6",
-        "jszip": "^3.10.1",
-        "prosemirror-commands": "^1.7.1",
-        "prosemirror-history": "^1.5.0",
+        "happy-dom": "^20.14.5",
+        "jszip": "^3.10.2",
+        "prosemirror-commands": "^1.7.2",
+        "prosemirror-history": "^1.5.1",
         "prosemirror-keymap": "^1.2.3",
-        "prosemirror-model": "^1.25.11",
+        "prosemirror-model": "^1.25.12",
         "prosemirror-state": "^1.4.4",
-        "prosemirror-view": "^1.41.9"
+        "prosemirror-view": "^1.42.6"
     },
     "devDependencies": {
         "@eslint/js": "^10.0.1",
-        "@types/node": "^24.0.0",
+        "@types/node": "^24.19.1",
         "@typescript/native": "npm:typescript@^7.0.2",
-        "eslint": "^10.6.0",
-        "fast-xml-parser": "^5.9.3",
-        "globals": "^17.0.0",
+        "eslint": "^10.12.0",
+        "fast-xml-parser": "^5.11.2",
+        "globals": "^17.13.0",
         "husky": "^9.1.7",
-        "lint-staged": "^17.0.8",
-        "prettier": "^3.8.5",
-        "tsx": "^4.22.4",
+        "lint-staged": "^17.6.0",
+        "prettier": "^3.9.9",
+        "tsx": "^4.23.15",
         "typescript": "npm:@typescript/typescript6@^6.0.2",
-        "typescript-eslint": "^8.67.0"
+        "typescript-eslint": "^8.71.0"
     },
     "engines": {
         "node": ">=18.0.0"

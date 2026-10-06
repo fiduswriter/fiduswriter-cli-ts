@@ -33,6 +33,7 @@ import {CLIJatsExporter} from "../exporters/jats.js"
 import {CLIPandocExporter} from "../exporters/pandoc.js"
 import {CLITEIExporter} from "../exporters/tei.js"
 import {CLIMarkdownExporter} from "../exporters/markdown.js"
+import {CLITypstExporter} from "../exporters/typst.js"
 
 const FORMATS = [
     "fidus",
@@ -44,7 +45,8 @@ const FORMATS = [
     "jats",
     "pandoc",
     "tei",
-    "markdown"
+    "markdown",
+    "typst"
 ] as const
 
 type Format = (typeof FORMATS)[number]
@@ -133,7 +135,7 @@ function mathOutputFromOptions(options: ConvertOptions): "mathml" | "svg" {
 // option applies to these. Formats that cannot represent them always resolve
 // (merge) the changes before exporting.
 const TRACK_CAPABLE_FORMATS: Format[] = ["html", "epub", "docx", "odt"]
-const ALWAYS_RESOLVE_FORMATS: Format[] = ["latex", "jats", "pandoc", "tei", "markdown"]
+const ALWAYS_RESOLVE_FORMATS: Format[] = ["latex", "jats", "pandoc", "tei", "markdown", "typst"]
 
 function trackedChangesFromOptions(
     options: ConvertOptions
@@ -347,6 +349,11 @@ async function exportFromFidus(
             await exporter.init()
             break
         }
+        case "typst": {
+            const exporter = new CLITypstExporter(doc, bibDB, imageDB, updated, outputPath)
+            await exporter.init()
+            break
+        }
     }
 }
 
@@ -480,6 +487,7 @@ function detectFormat(filePath: string): Format | undefined {
             if (filePath.endsWith(".pandoc.json.zip")) return "pandoc"
             if (filePath.endsWith(".tei.xml.zip")) return "tei"
             if (filePath.endsWith(".md.zip")) return "markdown"
+            if (filePath.endsWith(".typ.zip")) return "typst"
             return undefined
         case ".html":
         case ".htm":
@@ -513,6 +521,8 @@ function extForFormat(format: Format): string {
             return ".tei.xml.zip"
         case "markdown":
             return ".md.zip"
+        case "typst":
+            return ".typ.zip"
     }
 }
 

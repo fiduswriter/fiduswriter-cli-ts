@@ -404,6 +404,46 @@ describe("fidus → export formats", () => {
         assert(await fileExists(out))
         assert(await isZipWithEntry(out, "document.json"))
     })
+
+    it("fidus → typst", async () => {
+        const out = outputPath("export.typ.zip")
+        const result = await run([FIXTURE, out])
+        assert.equal(result.code, 0, `stderr: ${result.stderr}`)
+        assert(await fileExists(out))
+        assert(await isZipWithEntry(out, "document.typ"))
+        assert(await isZipWithEntry(out, "README.txt"))
+    })
+
+    it("fidus → typst with citations", async () => {
+        const out = outputPath("citations.typ.zip")
+        const result = await run([CITATIONS_FIXTURE, out])
+        assert.equal(result.code, 0, `stderr: ${result.stderr}`)
+        assert(await fileExists(out))
+        assert(await isZipWithEntry(out, "document.typ"))
+        assert(
+            await isZipWithEntry(out, "bibliography.bib"),
+            "cited entries should be included as bibliography.bib"
+        )
+        const buf = await readFile(out)
+        const zip = await JSZip.loadAsync(buf)
+        const typst = await zip.file("document.typ")!.async("string")
+        assert.match(typst, /#cite\(<[^>]+>\)/)
+        const bib = await zip.file("bibliography.bib")!.async("string")
+        assert.match(bib, /^@/m)
+    })
+
+    it("fidus → typst with image", async () => {
+        const out = outputPath("image.typ.zip")
+        const result = await run([IMAGE_FIXTURE, out])
+        assert.equal(result.code, 0, `stderr: ${result.stderr}`)
+        assert(await fileExists(out))
+        assert(await isZipWithEntry(out, "document.typ"))
+        assert(await isZipWithEntry(out, "images/image-91.png"))
+        const buf = await readFile(out)
+        const zip = await JSZip.loadAsync(buf)
+        const typst = await zip.file("document.typ")!.async("string")
+        assert.match(typst, /#figure\(image\("images\/image-91\.png"/)
+    })
 })
 
 describe("--math-output option", () => {

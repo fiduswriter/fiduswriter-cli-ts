@@ -42,6 +42,7 @@ const OUTPUT_FORMATS = [
     {format: "pandoc", ext: "pandoc.json.zip", minSize: 100, jsonEntry: "document.json"},
     {format: "tei", ext: "tei.xml.zip", minSize: 200, xmlEntry: undefined},
     {format: "markdown", ext: "md.zip", minSize: 200, xmlEntry: "document.md"},
+    {format: "typst", ext: "typ.zip", minSize: 200, xmlEntry: "document.typ"},
     {format: "fidus", ext: "fidus", minSize: 500}
 ] as const
 
@@ -156,6 +157,11 @@ async function assertOutputContains(
         case "markdown": {
             const text = await readZipEntry(path, xmlEntry!)
             assert.ok(contains(text, snippet), `Markdown missing snippet: ${text}`)
+            break
+        }
+        case "typst": {
+            const text = await readZipEntry(path, xmlEntry!)
+            assert.ok(contains(text, snippet), `Typst missing snippet: ${text}`)
             break
         }
         case "epub": {

@@ -1,6 +1,6 @@
 import type {Command} from "commander"
 import {mkdtemp, readFile, rm, writeFile} from "node:fs/promises"
-import {extname, join, resolve} from "node:path"
+import {dirname, extname, join, resolve} from "node:path"
 import {tmpdir} from "node:os"
 import JSZip from "jszip"
 import {Node as PMNode} from "prosemirror-model"
@@ -16,6 +16,7 @@ import {generateDocxTemplate, generateOdtTemplate} from "@fiduswriter/document/e
 import {DocxImporter} from "@fiduswriter/document/importer/docx"
 import {OdtImporter} from "@fiduswriter/document/importer/odt"
 import {PandocImporter} from "@fiduswriter/document/importer/pandoc"
+import {HtmlImporter} from "@fiduswriter/document/importer/html"
 import {ShrinkFidus} from "@fiduswriter/document/exporter/native/shrink"
 import {ZipFidus} from "@fiduswriter/document/exporter/native/zip"
 import {acceptAllNoInsertions} from "@fiduswriter/document/transform"
@@ -30,6 +31,8 @@ import {CLIHtmlExporter} from "../exporters/html.js"
 import {CLIEpubExporter} from "../exporters/epub.js"
 import {CLIJatsExporter} from "../exporters/jats.js"
 import {CLIPandocExporter} from "../exporters/pandoc.js"
+import {CLITEIExporter} from "../exporters/tei.js"
+import {CLIMarkdownExporter} from "../exporters/markdown.js"
 
 const FORMATS = [
     "fidus",
@@ -39,7 +42,9 @@ const FORMATS = [
     "html",
     "epub",
     "jats",
-    "pandoc"
+    "pandoc",
+    "tei",
+    "markdown"
 ] as const
 
 type Format = (typeof FORMATS)[number]
@@ -128,7 +133,7 @@ function mathOutputFromOptions(options: ConvertOptions): "mathml" | "svg" {
 // option applies to these. Formats that cannot represent them always resolve
 // (merge) the changes before exporting.
 const TRACK_CAPABLE_FORMATS: Format[] = ["html", "epub", "docx", "odt"]
-const ALWAYS_RESOLVE_FORMATS: Format[] = ["latex", "jats", "pandoc"]
+const ALWAYS_RESOLVE_FORMATS: Format[] = ["latex", "jats", "pandoc", "tei", "markdown"]
 
 function trackedChangesFromOptions(
     options: ConvertOptions
@@ -332,6 +337,16 @@ async function exportFromFidus(
             await exporter.init()
             break
         }
+        case "tei": {
+            const exporter = new CLITEIExporter(doc, bibDB, imageDB, csl, updated, outputPath)
+            await exporter.init()
+            break
+        }
+        case "markdown": {
+            const exporter = new CLIMarkdownExporter(doc, bibDB, imageDB, updated, outputPath)
+            await exporter.init()
+            break
+        }
     }
 }
 
@@ -380,6 +395,50 @@ async function importToFidus(
             result = {ok: output.ok, statusText: output.statusText}
             break
         }
+        case "html": {
+            // A Fidus Writer HTML export can be a single .html file (with
+            // possibly relative image paths on disk) or a .html.zip bundle
+            // with images (and, in future versions, a bibliography).
+            let importFile = file
+            const files: {images?: Record<string, Blob>; bibliography?: string} = {}
+            if (buffer.subarray(0, 2).toString("latin1") === "PK") {
+                const zip = await JSZip.loadAsync(buffer)
+                const htmlEntry = zip.file("document.html")
+                if (htmlEntry) {
+                    importFile = new Blob([await htmlEntry.async("string")], {
+                        type: "text/html"
+                    })
+                    const images: Record<string, Blob> = {}
+                    const imagePromises: Promise<void>[] = []
+                    zip.forEach((path, entry) => {
+                        if (entry.dir || !path.startsWith("images/")) {
+                            return
+                        }
+                        imagePromises.push(
+                            entry.async("arraybuffer").then(imageBuffer => {
+                                images[path] = new Blob([imageBuffer])
+                            })
+                        )
+                    })
+                    await Promise.all(imagePromises)
+                    files.images = images
+                    const bibEntry = zip.file("bibliography.bib")
+                    if (bibEntry) {
+                        files.bibliography = await bibEntry.async("string")
+                    }
+                }
+            } else {
+                files.images = await htmlImageFiles(inputPath)
+            }
+            const importer = new HtmlImporter(importFile, user, tmpDir, "default", {
+                getTemplate,
+                nativeBackend: backend,
+                files
+            })
+            const output = await importer.init()
+            result = {ok: output.ok, statusText: output.statusText}
+            break
+        }
         default:
             console.error(`Import from ${fromFormat} is not supported`)
             process.exit(1)
@@ -419,7 +478,14 @@ function detectFormat(filePath: string): Format | undefined {
             if (filePath.endsWith(".html.zip")) return "html"
             if (filePath.endsWith(".jats.zip")) return "jats"
             if (filePath.endsWith(".pandoc.json.zip")) return "pandoc"
+            if (filePath.endsWith(".tei.xml.zip")) return "tei"
+            if (filePath.endsWith(".md.zip")) return "markdown"
             return undefined
+        case ".html":
+        case ".htm":
+            return "html"
+        case ".md":
+            return "markdown"
         default:
             return undefined
     }
@@ -443,7 +509,41 @@ function extForFormat(format: Format): string {
             return ".jats.zip"
         case "pandoc":
             return ".pandoc.json.zip"
+        case "tei":
+            return ".tei.xml.zip"
+        case "markdown":
+            return ".md.zip"
     }
+}
+
+/**
+ * Read the images a loose HTML file references with relative paths from disk,
+ * keyed by the src as written in the HTML.
+ */
+async function htmlImageFiles(inputPath: string): Promise<Record<string, Blob>> {
+    const html = await readFile(inputPath, "utf-8")
+    const files: Record<string, Blob> = {}
+    const srcRegex = /<img[^>]+src="([^"]+)"/gi
+    const dir = dirname(resolve(inputPath))
+    let match: RegExpExecArray | null
+    while ((match = srcRegex.exec(html)) !== null) {
+        const src = match[1]
+        if (
+            !src ||
+            src.startsWith("data:") ||
+            /^[a-z][a-z0-9+.-]*:\/\//i.test(src) ||
+            files[src]
+        ) {
+            continue
+        }
+        try {
+            const imageBuffer = await readFile(join(dir, decodeURIComponent(src)))
+            files[src] = new Blob([imageBuffer])
+        } catch {
+            // Missing local file: leave resolution to the URL fetch path.
+        }
+    }
+    return files
 }
 
 let tmpDirCache: string | undefined

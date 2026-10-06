@@ -16,8 +16,8 @@ importers:
         specifier: ^0.1.29
         version: 0.1.29(@pdfme/pdf-lib@6.2.2)(prosemirror-commands@1.7.2)(prosemirror-history@1.5.1)(prosemirror-keymap@1.2.3)(prosemirror-model@1.25.12)(prosemirror-state@1.4.4)(prosemirror-view@1.42.6)
       '@fiduswriter/document':
-        specifier: ^0.3.19
-        version: 0.3.19(@pdfme/pdf-lib@6.2.2)
+        specifier: ^0.3.28
+        version: 0.3.28(@pdfme/pdf-lib@6.2.2)
       citeproc-plus:
         specifier: ^2.0.4
         version: 2.0.4
@@ -313,8 +313,8 @@ packages:
   '@fiduswriter/books-document@0.1.29':
     resolution: {integrity: sha512-tz8azUuHkpN8thVIchk7hbsIzDmDmS05linHtpqhz1Mmu83ig+ija4tV1hkrxCnCNzDcc1ixctKaW3yzhUHaQQ==}
 
-  '@fiduswriter/document@0.3.19':
-    resolution: {integrity: sha512-Yte18A8Yr4NmVJC6XzAwZ/IookgEw0ZLXCP5ubkUMlSml67ek1+d73upIniZLGCd4PtQn1d95Vhg/lGrbCPXlA==}
+  '@fiduswriter/document@0.3.28':
+    resolution: {integrity: sha512-0qezBBuUN5KgSElDZp2JFyPRqHNQOPjRzWKsRHHYF320j3gt2CaQ8UzGbKnObg/+36i0T96iKK7YiTaspqCNyg==}
 
   '@humanfs/core@0.19.2':
     resolution: {integrity: sha512-UhXNm+CFMWcbChXywFwkmhqjs3PRCmcSa/hfBgLIb7oQ5HNb1wS0icWsGtSAUNgefHeI+eBrA8I1fxmbHsGdvA==}
@@ -613,6 +613,9 @@ packages:
     resolution: {integrity: sha512-3nED0ENvAP4yroghehwK6AmlOaTTn7EvIPSpFee5Lrfkmge/ZDP891yJGZpSIqAzp8G0o5ccgHcgHZjEzHYxUA==}
     engines: {node: '>=22'}
 
+  boolbase@1.0.0:
+    resolution: {integrity: sha512-JZOSA7Mo9sNGB8+UjSgzdLtokWAky1zbztM3WRLCbZ70/3cTANmQmOdR7y2g+J0e2WXywy1yS468tY+IruqEww==}
+
   brace-expansion@5.0.12:
     resolution: {integrity: sha512-YovQ3rzhaLMIrDjNDMkNS01tea93qhEhG5xy8f6+R0l+dw3Ki+5sCoIoI942iuLZTHWogWktgwVDhU09iNEimQ==}
     engines: {node: 20 || >=22}
@@ -685,9 +688,16 @@ packages:
     resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
     engines: {node: '>= 8'}
 
+  css-select@5.2.2:
+    resolution: {integrity: sha512-TizTzUddG/xYLA3NXodFM0fSbNizXjOKhqiQQwvhlspadZokn1KDy0NZFS0wuEubIYAV5/c1/lAr0TaaFXEXzw==}
+
   css-tree@1.1.3:
     resolution: {integrity: sha512-tRpdppF7TRazZrjJ6v3stzv93qxRcSsFmW6cX0Zm2NVKpxE1WV1HblnghVv9TreireHkqI/VDEsfolRF1p6y7Q==}
     engines: {node: '>=8.0.0'}
+
+  css-what@6.2.2:
+    resolution: {integrity: sha512-u/O3vwbptzhMs3L1fQE82ZSLHQQfto5gyZzwteVIEyeaY5Fc7R4dapF/BvRoSYFeqfBk4m0V1Vafq5Pjv25wvA==}
+    engines: {node: '>= 6'}
 
   d@1.0.2:
     resolution: {integrity: sha512-MOqHvMWF9/9MX6nza0KgvFH4HpMU0EF5uUDXqX/BtxtU8NfB0QzRtJ8Oe/6SuS4kbhyzVJwjd97EA4PKrzJ8bw==}
@@ -717,6 +727,19 @@ packages:
   diff-dom@5.2.1:
     resolution: {integrity: sha512-G6WquwIa/XOxiYDYRMxfJj+c+a6LXMv7zgXoAQ3eRjTYkc8Lc4Aq97krTu/B15r243FR7dyeSxDenzKtO6sbfA==}
 
+  dom-serializer@2.0.0:
+    resolution: {integrity: sha512-wIkAryiqt/nV5EQKqQpo3SToSOV9J0DnbJqwK7Wv/Trc92zIAYZ4FlMu+JPFW1DfGFt81ZTCGgDEabffXeLyJg==}
+
+  domelementtype@2.3.0:
+    resolution: {integrity: sha512-OLETBj6w0OsagBwdXnPdN0cnMfF9opN69co+7ZrbfPGrdpPVNBUj02spi6B1N7wChLQiPn4CSH/zJvXw56gmHw==}
+
+  domhandler@5.0.3:
+    resolution: {integrity: sha512-cgwlv/1iFQiFnU96XXgROh8xTeetsnJiDsTc7TYCLFd9+/WNkIqPTxiM/8pSd8VIrhXGTf1Ny1q1hquVqDJB5w==}
+    engines: {node: '>= 4'}
+
+  domutils@3.2.2:
+    resolution: {integrity: sha512-6kZKyUajlDuqlHKVX1w7gyslj9MPIXzIFiz/rGu35uC1wMi+kMhQwGhl4lt9unC9Vb9INnY9Z3/ZA3+FhASLaw==}
+
   downloadjs@1.4.7:
     resolution: {integrity: sha512-LN1gO7+u9xjU5oEScGFKvXhYf7Y/empUIIEAGBs1LzUq/rg5duiDrkuH5A2lQGd5jfMOb9X9usDa2oVXwJ0U/Q==}
 
@@ -725,9 +748,17 @@ packages:
     engines: {node: '>=20'}
     hasBin: true
 
+  entities@4.5.0:
+    resolution: {integrity: sha512-V0hjH4dGPh9Ao5p0MoRY6BVqtwCjhz6vI5LT8AJ55H+4g9/4vbHx1I54fS0XuclLhDHArPQCiMjDxjaL8fPxhw==}
+    engines: {node: '>=0.12'}
+
   entities@7.0.1:
     resolution: {integrity: sha512-TWrgLOFUQTH994YUyl1yT4uyavY5nNB5muff+RtWaqNVCAK408b5ZnnbNAUEWLTCpum9w6arT70i1XdQ4UeOPA==}
     engines: {node: '>=0.12'}
+
+  entities@8.1.0:
+    resolution: {integrity: sha512-kxL7msIffSuh9aaFAMD7rxAIuTRMAHMeBtgHW2yUdWw732ZNh4MehkF2gdjvtdmikkaIP9bFDDJOPlsvm7avrA==}
+    engines: {node: '>=20.19.0'}
 
   es5-ext@0.10.64:
     resolution: {integrity: sha512-p2snDhiLaXe6dahss1LddxqEm+SkuDvV8dnIQG0MWjyHpcMNfXKPE+/Cc0y+PhxJX3A4xGNeFCj5oc0BUh6deg==}
@@ -1010,10 +1041,16 @@ packages:
   node-html-better-parser@1.5.9:
     resolution: {integrity: sha512-z1I5UINMezJXYL9cH3h0a9KBth2G978gSLlfkpQ+CQzzVHVQy9gpARgm9eDsz1O4gn1HtgUqjdAIYxKFZm6uHQ==}
 
+  node-html-parser@9.0.4:
+    resolution: {integrity: sha512-reUSrZkF1rO7hEYe5mJwtbVcQ6mB5QrViCZH6Wv+iz3er/PA9Q50gol15dMLQRDfdli4VzqPMPR24HNRFgVKFw==}
+
   nopt@10.0.1:
     resolution: {integrity: sha512-df3sBr/6ax9hSGuC3CspvLlbnX8cP5L5nZwXF8cGN8l0zSWR6BvzmQ6jPUKjvo6+/xdpkNvEcucBNUdBeeV13g==}
     engines: {node: ^22.22.2 || ^24.15.0 || >=26.0.0}
     hasBin: true
+
+  nth-check@2.1.1:
+    resolution: {integrity: sha512-lqjrjmaOoAnWfMmBPL+XNnynZh2+swxiX3WUE0s4yEHI6m+AwrK2UZOimIRl3X/4QctVqS8AiZjFqyOGrMXb/w==}
 
   optionator@0.9.4:
     resolution: {integrity: sha512-6IpQ7mKUxRcZNLIObR0hz7lxsapSSIYNZJwXPGeF0mTVqGKFIXj1DQcMoT22S3ROcLyY/rz0PWaWZ9ayWmad9g==}
@@ -1036,8 +1073,8 @@ packages:
   pages-to-pdf@0.4.1:
     resolution: {integrity: sha512-Y91uRab9lJNzw9M89QPzX6pd/ITG9MGSMx7RCA9cY7l3SM3oh5Tj9i8XTrIBxUyffiHFWVcsz+W6MotuwMwqBA==}
 
-  paginate-for-print@1.1.0:
-    resolution: {integrity: sha512-XZNKzznRo+ntB3LHA4Cyki7zkjDC6nha4YwXTpKeAy2/2PlEWE3av7Vl1+GR3tR0Exuryhybzazs0A+YvFl0tA==}
+  paginate-for-print@1.1.2:
+    resolution: {integrity: sha512-8lgEyfIsuaN7E3aFBjbQIp0LxHoG/MNvDSZZIvausrMwFXEUvOYRTJUf5wKn/RREHrLnnw5SxjMK0Tm2NiVOYA==}
 
   pako@0.2.9:
     resolution: {integrity: sha512-NUcwaKxUxWrZLpDG+z/xZaCgQITkA/Dv4V/T6bw7VON6l1Xz/VnrBqrYjZQ12TamKHzITTfOEIYUj48y2KXImA==}
@@ -1444,7 +1481,7 @@ snapshots:
 
   '@fiduswriter/books-document@0.1.29(@pdfme/pdf-lib@6.2.2)(prosemirror-commands@1.7.2)(prosemirror-history@1.5.1)(prosemirror-keymap@1.2.3)(prosemirror-model@1.25.12)(prosemirror-state@1.4.4)(prosemirror-view@1.42.6)':
     dependencies:
-      '@fiduswriter/document': 0.3.19(@pdfme/pdf-lib@6.2.2)
+      '@fiduswriter/document': 0.3.28(@pdfme/pdf-lib@6.2.2)
       bibliojson: 4.1.0
       downloadjs: 1.4.7
       fast-deep-equal: 3.1.3
@@ -1460,7 +1497,7 @@ snapshots:
       - prosemirror-state
       - prosemirror-view
 
-  '@fiduswriter/document@0.3.19(@pdfme/pdf-lib@6.2.2)':
+  '@fiduswriter/document@0.3.28(@pdfme/pdf-lib@6.2.2)':
     dependencies:
       '@mathjax/mathjax-newcm-font': 4.1.3
       '@mathjax/src': 4.1.3
@@ -1475,9 +1512,10 @@ snapshots:
       mathlive: 0.110.0
       mathml-to-latex: 1.8.0
       mathml2omml: 0.5.0
+      node-html-parser: 9.0.4
       orderedmap: 2.1.1
       pages-to-pdf: 0.4.1
-      paginate-for-print: 1.1.0(@pdfme/pdf-lib@6.2.2)
+      paginate-for-print: 1.1.2(@pdfme/pdf-lib@6.2.2)
       prettier: 3.9.9
       prosemirror-commands: 1.7.2
       prosemirror-gapcursor: 1.4.1
@@ -1758,6 +1796,8 @@ snapshots:
     dependencies:
       xregexp: 5.1.3
 
+  boolbase@1.0.0: {}
+
   brace-expansion@5.0.12:
     dependencies:
       balanced-match: 4.0.4
@@ -1828,10 +1868,20 @@ snapshots:
       shebang-command: 2.0.0
       which: 2.0.2
 
+  css-select@5.2.2:
+    dependencies:
+      boolbase: 1.0.0
+      css-what: 6.2.2
+      domhandler: 5.0.3
+      domutils: 3.2.2
+      nth-check: 2.1.1
+
   css-tree@1.1.3:
     dependencies:
       mdn-data: 2.0.14
       source-map: 0.6.1
+
+  css-what@6.2.2: {}
 
   d@1.0.2:
     dependencies:
@@ -1852,6 +1902,24 @@ snapshots:
 
   diff-dom@5.2.1: {}
 
+  dom-serializer@2.0.0:
+    dependencies:
+      domelementtype: 2.3.0
+      domhandler: 5.0.3
+      entities: 4.5.0
+
+  domelementtype@2.3.0: {}
+
+  domhandler@5.0.3:
+    dependencies:
+      domelementtype: 2.3.0
+
+  domutils@3.2.2:
+    dependencies:
+      dom-serializer: 2.0.0
+      domelementtype: 2.3.0
+      domhandler: 5.0.3
+
   downloadjs@1.4.7: {}
 
   editorconfig@3.0.2:
@@ -1861,7 +1929,11 @@ snapshots:
       minimatch: 10.2.6
       semver: 7.8.5
 
+  entities@4.5.0: {}
+
   entities@7.0.1: {}
+
+  entities@8.1.0: {}
 
   es5-ext@0.10.64:
     dependencies:
@@ -2208,9 +2280,18 @@ snapshots:
     dependencies:
       html-entities: 2.6.0
 
+  node-html-parser@9.0.4:
+    dependencies:
+      css-select: 5.2.2
+      entities: 8.1.0
+
   nopt@10.0.1:
     dependencies:
       abbrev: 5.0.0
+
+  nth-check@2.1.1:
+    dependencies:
+      boolbase: 1.0.0
 
   optionator@0.9.4:
     dependencies:
@@ -2241,7 +2322,7 @@ snapshots:
       fontkit: 2.0.4
       svg4pdf-lib: 0.1.2(@pdfme/pdf-lib@6.2.2)
 
-  paginate-for-print@1.1.0(@pdfme/pdf-lib@6.2.2):
+  paginate-for-print@1.1.2(@pdfme/pdf-lib@6.2.2):
     dependencies:
       '@babel/runtime': 7.29.7
       '@chenglou/pretext': 0.0.8

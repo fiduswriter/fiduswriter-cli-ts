@@ -6,8 +6,7 @@ import {tmpdir} from "node:os"
 
 import {run, outputPath, fileExists, fileMinSize, isZipWithEntry} from "./helpers/cli.js"
 import {
-    isPandocAvailable,
-    generateCorpusCase,
+    loadCorpusCase,
     buildCitationDocx,
     extractTextFromDocx,
     type CorpusCase
@@ -35,12 +34,10 @@ let baseCase: CorpusCase
 
 before(async () => {
     tmpDir = await mkdtemp(join(tmpdir(), "fidusconvert-citations-"))
-    if (isPandocAvailable()) {
-        baseCase = await generateCorpusCase(
-            join(dirname(import.meta.dirname), "test", "corpus", "minimal.md"),
-            tmpDir
-        )
-    }
+    baseCase = await loadCorpusCase(
+        "minimal",
+        join(dirname(import.meta.dirname), "test", "corpus")
+    )
 })
 
 after(async () => {
@@ -50,15 +47,6 @@ after(async () => {
 })
 
 function describeFragments() {
-    if (!isPandocAvailable()) {
-        describe("citation fragments", () => {
-            it("skips because Pandoc is not installed", () => {
-                console.warn("Pandoc not available; skipping citation fragment tests")
-            })
-        })
-        return
-    }
-
     describe("citation manager DOCX fragments", () => {
         for (const [fileName, spec] of Object.entries(FRAGMENTS)) {
             it(`imports ${basename(fileName, extname(fileName))} without crashing`, async () => {

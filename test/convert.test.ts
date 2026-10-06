@@ -1,7 +1,7 @@
 import {describe, it, before, after} from "node:test"
 import assert from "node:assert/strict"
 import {execFile} from "node:child_process"
-import {mkdtemp, rm, stat, readFile} from "node:fs/promises"
+import {mkdtemp, rm, stat, readFile, writeFile} from "node:fs/promises"
 import {join, dirname} from "node:path"
 import {tmpdir} from "node:os"
 import JSZip from "jszip"
@@ -338,6 +338,65 @@ describe("fidus → export formats", () => {
         assert(await fileMinSize(out, 100))
     })
 
+    it("fidus → tei", async () => {
+        const out = outputPath("export.tei.xml.zip")
+        const result = await run([FIXTURE, out])
+        assert.equal(result.code, 0, `stderr: ${result.stderr}`)
+        assert(await fileExists(out))
+        assert(await fileMinSize(out, 200))
+        const buf = await readFile(out)
+        const zip = await JSZip.loadAsync(buf)
+        const teiEntries = zip.file(/\.tei\.xml$/)
+        assert.equal(teiEntries.length, 1, "TEI zip should contain one .tei.xml entry")
+        const xml = await teiEntries[0].async("string")
+        assert.match(xml, /<TEI[\s>]/)
+    })
+
+    it("fidus → tei with image", async () => {
+        const out = outputPath("image.tei.xml.zip")
+        const result = await run([IMAGE_FIXTURE, out])
+        assert.equal(result.code, 0, `stderr: ${result.stderr}`)
+        assert(await fileExists(out))
+        const buf = await readFile(out)
+        const zip = await JSZip.loadAsync(buf)
+        assert(
+            zip.file("images/image-91.png") !== null,
+            "TEI zip should contain the image"
+        )
+        const teiEntries = zip.file(/\.tei\.xml$/)
+        assert.equal(teiEntries.length, 1)
+        const xml = await teiEntries[0].async("string")
+        assert.match(xml, /<graphic[^>]+url="images\/image-91\.png"/)
+    })
+
+    it("fidus → markdown", async () => {
+        const out = outputPath("export.md.zip")
+        const result = await run([FIXTURE, out])
+        assert.equal(result.code, 0, `stderr: ${result.stderr}`)
+        assert(await fileExists(out))
+        assert(await isZipWithEntry(out, "document.md"))
+        assert(await isZipWithEntry(out, "README.txt"))
+    })
+
+    it("fidus → markdown with image and citations", async () => {
+        const out = outputPath("citations.md.zip")
+        const result = await run([CITATIONS_FIXTURE, out])
+        assert.equal(result.code, 0, `stderr: ${result.stderr}`)
+        assert(await fileExists(out))
+        assert(await isZipWithEntry(out, "document.md"))
+        assert(await isZipWithEntry(out, "README.txt"))
+        assert(
+            await isZipWithEntry(out, "bibliography.bib"),
+            "cited entries should be included as bibliography.bib"
+        )
+        const buf = await readFile(out)
+        const zip = await JSZip.loadAsync(buf)
+        const markdown = await zip.file("document.md")!.async("string")
+        assert.match(markdown, /\[@[^\]\s]+\]/)
+        const bib = await zip.file("bibliography.bib")!.async("string")
+        assert.match(bib, /^@/m)
+    })
+
     it("fidus → fidus", async () => {
         const out = outputPath("export.fidus")
         const result = await run([FIXTURE, out])
@@ -508,6 +567,41 @@ describe("docx/odt → fidus → export (round-trip)", () => {
         assert.equal(result.code, 0, `stderr: ${result.stderr}`)
         assert(await fileExists(latexPath))
         assert(await isZipWithEntry(latexPath, "document.tex"))
+    })
+
+    it("fidus → html (zip) → fidus", async () => {
+        const htmlPath = outputPath("rt5.html.zip")
+        let result = await run([FIXTURE, htmlPath])
+        assert.equal(result.code, 0, `stderr: ${result.stderr}`)
+        assert(await isZipWithEntry(htmlPath, "document.html"))
+
+        const fidusPath = outputPath("rt5.fidus")
+        result = await run([htmlPath, fidusPath])
+        assert.equal(result.code, 0, `stderr: ${result.stderr}`)
+        assert(await fileExists(fidusPath))
+        assert(await isZipWithEntry(fidusPath, "document.json"))
+    })
+
+    it("fidus → loose html → fidus", async () => {
+        // A single .html file (images resolved relative to its directory)
+        // imports the same way as the zip bundle.
+        const htmlZipPath = outputPath("rt6.html.zip")
+        let result = await run([FIXTURE, htmlZipPath])
+        assert.equal(result.code, 0, `stderr: ${result.stderr}`)
+
+        const buf = await readFile(htmlZipPath)
+        const zip = await JSZip.loadAsync(buf)
+        const loosePath = outputPath("rt6.html")
+        await writeFile(
+            loosePath,
+            await zip.file("document.html")!.async("string")
+        )
+
+        const fidusPath = outputPath("rt6.fidus")
+        result = await run([loosePath, fidusPath])
+        assert.equal(result.code, 0, `stderr: ${result.stderr}`)
+        assert(await fileExists(fidusPath))
+        assert(await isZipWithEntry(fidusPath, "document.json"))
     })
 })
 

@@ -1,6 +1,6 @@
 import {execFile} from "node:child_process"
-import {readFile} from "node:fs/promises"
-import {basename, extname, join} from "node:path"
+import {readFile, access} from "node:fs/promises"
+import {join} from "node:path"
 import {promisify} from "node:util"
 import JSZip from "jszip"
 import {XMLParser} from "fast-xml-parser"
@@ -40,6 +40,7 @@ export interface GeneratedInputs {
     docx: string
     odt: string
     json: string
+    html: string
 }
 
 export interface CorpusCase {
@@ -49,6 +50,40 @@ export interface CorpusCase {
 }
 
 const DEFAULT_SNIPPET = "MatrixSnippet2024"
+
+/**
+ * Load a corpus case from the stored fixtures in test/corpus/.
+ *
+ * The pandoc-derived inputs (docx/odt/json/html) are committed fixtures so
+ * they can be modified and reviewed by hand; regenerate them deliberately
+ * with `node scripts/update-test-corpus.mjs` after editing a markdown
+ * source or changing the pandoc version.
+ */
+export async function loadCorpusCase(
+    name: string,
+    corpusDir: string
+): Promise<CorpusCase> {
+    const inputs = {
+        name,
+        docx: join(corpusDir, `${name}.docx`),
+        odt: join(corpusDir, `${name}.odt`),
+        json: join(corpusDir, `${name}.json`),
+        html: join(corpusDir, `${name}.html`)
+    }
+    for (const [format, path] of Object.entries(inputs)) {
+        if (format === "name") {
+            continue
+        }
+        try {
+            await access(path)
+        } catch {
+            throw new Error(
+                `Missing corpus fixture ${path}. Run node scripts/update-test-corpus.mjs to regenerate the corpus files.`
+            )
+        }
+    }
+    return {name, snippet: DEFAULT_SNIPPET, inputs}
+}
 
 export async function buildCitationDocx(
     baseDocxPath: string,
@@ -90,39 +125,6 @@ export async function buildCitationOdt(
     await writeFile(outputPath, outputBuf)
 
     return outputPath
-}
-
-export async function generateCorpusCase(
-    markdownPath: string,
-    outputDir: string
-): Promise<CorpusCase> {
-    const pandoc = findPandoc()
-    if (!pandoc) {
-        throw new Error("Pandoc is not available")
-    }
-
-    const name = basename(markdownPath, extname(markdownPath))
-    const docx = join(outputDir, `${name}.docx`)
-    const odt = join(outputDir, `${name}.odt`)
-    const json = join(outputDir, `${name}.json`)
-
-    await runPandoc(pandoc, [markdownPath, "-f", "markdown", "-t", "docx", "-o", docx])
-    await runPandoc(pandoc, [markdownPath, "-f", "markdown", "-t", "odt", "-o", odt])
-    await runPandoc(pandoc, [markdownPath, "-f", "markdown", "-t", "json", "-o", json])
-
-    return {
-        name,
-        snippet: DEFAULT_SNIPPET,
-        inputs: {name, docx, odt, json}
-    }
-}
-
-async function runPandoc(pandoc: string, args: string[]): Promise<void> {
-    const {stderr} = await execFileAsync(pandoc, args)
-    if (stderr && stderr.trim()) {
-        // Pandoc warnings are common and should not fail generation.
-        console.warn(`pandoc warning: ${stderr.trim()}`)
-    }
 }
 
 export async function pandocToPlain(

@@ -7,7 +7,7 @@ import JSZip from "jszip"
 
 import {
     isPandocAvailable,
-    generateCorpusCase,
+    loadCorpusCase,
     extractTextFromDocx,
     extractTextFromOdt,
     extractTextFromZipEntry,
@@ -20,16 +20,12 @@ import {
 import {run, outputPath, fileExists, fileMinSize, isZipWithEntry} from "./helpers/cli.js"
 
 const CORPUS_DIR = join(dirname(import.meta.dirname), "test", "corpus")
-const SOURCES = ["minimal.md", "inline.md", "structured.md"]
+const SOURCES = ["minimal", "inline", "structured"]
 
 const tmpDir = await mkdtemp(join(tmpdir(), "fidusconvert-matrix-"))
 const corpusCases: CorpusCase[] = []
-if (isPandocAvailable()) {
-    for (const source of SOURCES) {
-        corpusCases.push(
-            await generateCorpusCase(join(CORPUS_DIR, source), tmpDir)
-        )
-    }
+for (const source of SOURCES) {
+    corpusCases.push(await loadCorpusCase(source, CORPUS_DIR))
 }
 
 after(async () => {
@@ -44,25 +40,19 @@ const OUTPUT_FORMATS = [
     {format: "epub", ext: "epub", minSize: 500},
     {format: "jats", ext: "jats.zip", minSize: 200, xmlEntry: "manuscript.xml"},
     {format: "pandoc", ext: "pandoc.json.zip", minSize: 100, jsonEntry: "document.json"},
+    {format: "tei", ext: "tei.xml.zip", minSize: 200, xmlEntry: undefined},
+    {format: "markdown", ext: "md.zip", minSize: 200, xmlEntry: "document.md"},
     {format: "fidus", ext: "fidus", minSize: 500}
 ] as const
 
 const IMPORT_FORMATS = [
     {format: "docx", input: (c: CorpusCase) => c.inputs.docx},
     {format: "odt", input: (c: CorpusCase) => c.inputs.odt},
-    {format: "pandoc", input: (c: CorpusCase) => c.inputs.json}
+    {format: "pandoc", input: (c: CorpusCase) => c.inputs.json},
+    {format: "html", input: (c: CorpusCase) => c.inputs.html}
 ] as const
 
 function describeMatrix() {
-    if (!isPandocAvailable()) {
-        describe("conversion matrix", () => {
-            it("skips because Pandoc is not installed", () => {
-                console.warn("Pandoc not available; skipping conversion matrix tests")
-            })
-        })
-        return
-    }
-
     for (const corpusCase of corpusCases) {
         describe(`${corpusCase.name} corpus`, () => {
             for (const importFmt of IMPORT_FORMATS) {
@@ -126,16 +116,20 @@ async function assertOutputContains(
             await assertValidXml(path, xmlEntry!)
             const text = await extractTextFromDocx(path)
             assert.ok(contains(text, snippet), `DOCX text missing snippet: ${text}`)
-            const plain = await pandocToPlain(path, "docx")
-            assert.ok(contains(plain, snippet), `DOCX plain text missing snippet: ${plain}`)
+            if (isPandocAvailable()) {
+                const plain = await pandocToPlain(path, "docx")
+                assert.ok(contains(plain, snippet), `DOCX plain text missing snippet: ${plain}`)
+            }
             break
         }
         case "odt": {
             await assertValidXml(path, xmlEntry!)
             const text = await extractTextFromOdt(path)
             assert.ok(contains(text, snippet), `ODT text missing snippet: ${text}`)
-            const plain = await pandocToPlain(path, "odt")
-            assert.ok(contains(plain, snippet), `ODT plain text missing snippet: ${plain}`)
+            if (isPandocAvailable()) {
+                const plain = await pandocToPlain(path, "odt")
+                assert.ok(contains(plain, snippet), `ODT plain text missing snippet: ${plain}`)
+            }
             break
         }
         case "latex":
@@ -146,11 +140,31 @@ async function assertOutputContains(
             assert.ok(contains(text, snippet), `${format} text missing snippet: ${text}`)
             break
         }
+        case "tei": {
+            // The TEI entry is named after the document title; find it by
+            // its .tei.xml suffix.
+            const buf = await readFile(path)
+            const zip = await JSZip.loadAsync(buf)
+            const entry = Object.keys(zip.files).find(name =>
+                name.endsWith(".tei.xml")
+            )
+            assert.ok(entry, "TEI zip has no .tei.xml entry")
+            const text = await zip.file(entry!).async("string")
+            assert.ok(contains(text, snippet), `TEI text missing snippet: ${text}`)
+            break
+        }
+        case "markdown": {
+            const text = await readZipEntry(path, xmlEntry!)
+            assert.ok(contains(text, snippet), `Markdown missing snippet: ${text}`)
+            break
+        }
         case "epub": {
             const text = await extractTextFromEpub(path)
             assert.ok(contains(text, snippet), `EPUB text missing snippet: ${text}`)
-            const plain = await pandocToPlain(path, "epub")
-            assert.ok(contains(plain, snippet), `EPUB plain text missing snippet: ${plain}`)
+            if (isPandocAvailable()) {
+                const plain = await pandocToPlain(path, "epub")
+                assert.ok(contains(plain, snippet), `EPUB plain text missing snippet: ${plain}`)
+            }
             break
         }
         case "pandoc": {

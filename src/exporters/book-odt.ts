@@ -1,5 +1,5 @@
-import { ODTBookExporter } from "@fiduswriter/books-document/exporter/odt"
-import type { Book, DocumentListEntry } from "@fiduswriter/books-document"
+import { ODTBookExporter } from "@fiduswriter/books/exporter/odt"
+import type { Book, DocumentListEntry } from "@fiduswriter/books"
 import type { CSL, User } from "@fiduswriter/document"
 import type { Schema } from "prosemirror-model"
 

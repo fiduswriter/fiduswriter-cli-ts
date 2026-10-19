@@ -1,5 +1,5 @@
-import { DOCXBookExporter } from "@fiduswriter/books-document/exporter/docx"
-import type { Book, DocumentListEntry } from "@fiduswriter/books-document"
+import { DOCXBookExporter } from "@fiduswriter/books/exporter/docx"
+import type { Book, DocumentListEntry } from "@fiduswriter/books"
 import type { CSL, User } from "@fiduswriter/document"
 import type { Schema } from "prosemirror-model"
 

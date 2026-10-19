@@ -1,9 +1,9 @@
-import { HTMLBookExporter } from "@fiduswriter/books-document/exporter/html"
+import { HTMLBookExporter } from "@fiduswriter/books/exporter/html"
 import type {
     Book,
     BookStyles,
     DocumentListEntry
-} from "@fiduswriter/books-document"
+} from "@fiduswriter/books"
 import type { CSL, User } from "@fiduswriter/document"
 import type { Schema } from "prosemirror-model"
 

@@ -20,7 +20,7 @@ import type {
     Book,
     Chapter,
     DocumentListEntry
-} from "@fiduswriter/books-document"
+} from "@fiduswriter/books"
 import type {
     FidusDoc,
     FidusNode,

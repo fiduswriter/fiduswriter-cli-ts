@@ -1,9 +1,9 @@
-import { EpubBookExporter } from "@fiduswriter/books-document/exporter/epub"
+import { EpubBookExporter } from "@fiduswriter/books/exporter/epub"
 import type {
     Book,
     BookStyles,
     DocumentListEntry
-} from "@fiduswriter/books-document"
+} from "@fiduswriter/books"
 import type { CSL, User } from "@fiduswriter/document"
 import type { Schema } from "prosemirror-model"
 

@@ -12,9 +12,9 @@ importers:
 
   .:
     dependencies:
-      '@fiduswriter/books-document':
-        specifier: ^0.1.29
-        version: 0.1.29(@pdfme/pdf-lib@6.2.2)(prosemirror-commands@1.7.2)(prosemirror-history@1.5.1)(prosemirror-keymap@1.2.3)(prosemirror-model@1.25.12)(prosemirror-state@1.4.4)(prosemirror-view@1.42.6)
+      '@fiduswriter/books':
+        specifier: ^0.2.0
+        version: 0.2.0(@pdfme/pdf-lib@6.2.2)(prosemirror-commands@1.7.2)(prosemirror-history@1.5.1)(prosemirror-keymap@1.2.3)(prosemirror-model@1.25.12)(prosemirror-state@1.4.4)(prosemirror-view@1.42.6)
       '@fiduswriter/document':
         specifier: ^0.3.33
         version: 0.3.33(@pdfme/pdf-lib@6.2.2)
@@ -310,11 +310,14 @@ packages:
     resolution: {integrity: sha512-IkO+/KEUvwbVpiURZg+P7zF74z5Jxe0UgJxVni+RtoHQ6IZieXaO02kmadomap/q+l6bc/jdPGGqTjhuZnuz1Q==}
     engines: {node: ^20.19.0 || ^22.13.0 || >=24}
 
-  '@fiduswriter/books-document@0.1.29':
-    resolution: {integrity: sha512-tz8azUuHkpN8thVIchk7hbsIzDmDmS05linHtpqhz1Mmu83ig+ija4tV1hkrxCnCNzDcc1ixctKaW3yzhUHaQQ==}
+  '@fiduswriter/books@0.2.0':
+    resolution: {integrity: sha512-y8HzQ828ZPDsOTF8CSSSZ427imbzZtfJR3UXsn4UztkY8bSX2+LzwXB6V8Yl6JBqTX4sBFwhYFJxasden8WU3Q==}
 
   '@fiduswriter/document@0.3.33':
     resolution: {integrity: sha512-d+8F0DUMBAcuAjO+w/DVQ2EvMLaCSRJSUD/DOA+NMmM139enMGLLcePeXVRH9Y011wG75ADICsB3As+lLazCSg==}
+
+  '@fiduswriter/document@0.3.37':
+    resolution: {integrity: sha512-TgRNpvm2Q3Yjj/3jjZjLF3R7s9ctEaMXJ5Oar2Sv7gSPaqYDWngFKIWLeBLqjruTtj9S5itIrAEqL8qYu03IfQ==}
 
   '@humanfs/core@0.19.2':
     resolution: {integrity: sha512-UhXNm+CFMWcbChXywFwkmhqjs3PRCmcSa/hfBgLIb7oQ5HNb1wS0icWsGtSAUNgefHeI+eBrA8I1fxmbHsGdvA==}
@@ -1076,6 +1079,9 @@ packages:
   paginate-for-print@1.1.2:
     resolution: {integrity: sha512-8lgEyfIsuaN7E3aFBjbQIp0LxHoG/MNvDSZZIvausrMwFXEUvOYRTJUf5wKn/RREHrLnnw5SxjMK0Tm2NiVOYA==}
 
+  paginate-for-print@1.1.3:
+    resolution: {integrity: sha512-7t8M9v4KtisLIW0860f11A0VgdVByli45qcdey8ckFmZA2W/wwVKRcrVRQobWBpX2YoQoesEIf0x0gy21ja9yQ==}
+
   pako@0.2.9:
     resolution: {integrity: sha512-NUcwaKxUxWrZLpDG+z/xZaCgQITkA/Dv4V/T6bw7VON6l1Xz/VnrBqrYjZQ12TamKHzITTfOEIYUj48y2KXImA==}
 
@@ -1108,6 +1114,11 @@ packages:
   prelude-ls@1.2.1:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
     engines: {node: '>= 0.8.0'}
+
+  prettier@3.9.10:
+    resolution: {integrity: sha512-skGHTH1Yb9QvaTC4hWnRTzEYtCpApF0UMBPz+t/0ZPzP8ihefo/btKd+QA7pUE0fEwA1SbS/NmhyEcstdXOIdA==}
+    engines: {node: '>=14'}
+    hasBin: true
 
   prettier@3.9.9:
     resolution: {integrity: sha512-Z/CJHIkdujO/OtN7nXUii0Rf3VT5SRuhjBA82Xvu2XhBUgX3nhP67T0LHceBdQLex7OOFGTox+Q5Yg8Jk2Qivg==}
@@ -1479,9 +1490,9 @@ snapshots:
       '@eslint/core': 1.2.1
       levn: 0.4.1
 
-  '@fiduswriter/books-document@0.1.29(@pdfme/pdf-lib@6.2.2)(prosemirror-commands@1.7.2)(prosemirror-history@1.5.1)(prosemirror-keymap@1.2.3)(prosemirror-model@1.25.12)(prosemirror-state@1.4.4)(prosemirror-view@1.42.6)':
+  '@fiduswriter/books@0.2.0(@pdfme/pdf-lib@6.2.2)(prosemirror-commands@1.7.2)(prosemirror-history@1.5.1)(prosemirror-keymap@1.2.3)(prosemirror-model@1.25.12)(prosemirror-state@1.4.4)(prosemirror-view@1.42.6)':
     dependencies:
-      '@fiduswriter/document': 0.3.33(@pdfme/pdf-lib@6.2.2)
+      '@fiduswriter/document': 0.3.37(@pdfme/pdf-lib@6.2.2)
       bibliojson: 4.1.0
       downloadjs: 1.4.7
       fast-deep-equal: 3.1.3
@@ -1517,6 +1528,41 @@ snapshots:
       pages-to-pdf: 0.4.1
       paginate-for-print: 1.1.2(@pdfme/pdf-lib@6.2.2)
       prettier: 3.9.9
+      prosemirror-commands: 1.7.2
+      prosemirror-gapcursor: 1.4.1
+      prosemirror-history: 1.5.1
+      prosemirror-keymap: 1.2.3
+      prosemirror-model: 1.25.12
+      prosemirror-schema-basic: 1.2.5
+      prosemirror-schema-list: 1.5.1
+      prosemirror-state: 1.4.4
+      prosemirror-tables: 1.8.5
+      prosemirror-transform: 1.12.2
+      prosemirror-view: 1.42.6
+      w3c-keyname: 2.2.8
+    transitivePeerDependencies:
+      - '@pdfme/pdf-lib'
+
+  '@fiduswriter/document@0.3.37(@pdfme/pdf-lib@6.2.2)':
+    dependencies:
+      '@mathjax/mathjax-newcm-font': 4.1.3
+      '@mathjax/src': 4.1.3
+      '@prettier/plugin-xml': 3.4.2(prettier@3.9.10)
+      bibliojson: 4.1.0
+      citeproc-plus: 2.0.4
+      downloadjs: 1.4.7
+      fast-deep-equal: 3.1.3
+      fast-xml-parser: 5.11.2
+      fwtoolkit: 0.2.28(prosemirror-commands@1.7.2)(prosemirror-history@1.5.1)(prosemirror-keymap@1.2.3)(prosemirror-model@1.25.12)(prosemirror-state@1.4.4)(prosemirror-view@1.42.6)
+      jszip: 3.10.2
+      mathlive: 0.110.0
+      mathml-to-latex: 1.8.0
+      mathml2omml: 0.5.0
+      node-html-parser: 9.0.4
+      orderedmap: 2.1.1
+      pages-to-pdf: 0.4.1
+      paginate-for-print: 1.1.3(@pdfme/pdf-lib@6.2.2)
+      prettier: 3.9.10
       prosemirror-commands: 1.7.2
       prosemirror-gapcursor: 1.4.1
       prosemirror-history: 1.5.1
@@ -1584,6 +1630,11 @@ snapshots:
       color: 5.0.3
       node-html-better-parser: 1.5.9
       pako: 3.0.2
+
+  '@prettier/plugin-xml@3.4.2(prettier@3.9.10)':
+    dependencies:
+      '@xml-tools/parser': 1.0.11
+      prettier: 3.9.10
 
   '@prettier/plugin-xml@3.4.2(prettier@3.9.9)':
     dependencies:
@@ -2337,6 +2388,21 @@ snapshots:
     transitivePeerDependencies:
       - '@pdfme/pdf-lib'
 
+  paginate-for-print@1.1.3(@pdfme/pdf-lib@6.2.2):
+    dependencies:
+      '@babel/runtime': 7.29.7
+      '@chenglou/pretext': 0.0.8
+      clear-cut: 2.0.2
+      css-tree: 1.1.3
+      event-emitter: 0.3.5
+      fontkit: 2.0.4
+      pages-to-pdf: 0.4.1
+      svg4pdf-lib: 0.1.2(@pdfme/pdf-lib@6.2.2)
+    optionalDependencies:
+      fonteditor-core: 2.6.3
+    transitivePeerDependencies:
+      - '@pdfme/pdf-lib'
+
   pako@0.2.9: {}
 
   pako@1.0.11: {}
@@ -2357,6 +2423,8 @@ snapshots:
   picomatch@4.0.7: {}
 
   prelude-ls@1.2.1: {}
+
+  prettier@3.9.10: {}
 
   prettier@3.9.9: {}
 

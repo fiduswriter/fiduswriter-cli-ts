@@ -1,5 +1,5 @@
-import { BITSBookExporter } from "@fiduswriter/books-document/exporter/bits"
-import type { Book, DocumentListEntry } from "@fiduswriter/books-document"
+import { BITSBookExporter } from "@fiduswriter/books/exporter/bits"
+import type { Book, DocumentListEntry } from "@fiduswriter/books"
 import type { CSL, User } from "@fiduswriter/document"
 import type { Schema } from "prosemirror-model"
 
@@ -8,7 +8,7 @@ import { writeBlobToFile } from "../utils/file.js"
 /**
  * Book-level JATS export.
  *
- * `@fiduswriter/books-document` has no standalone "jats" book exporter; the
+ * `@fiduswriter/books` has no standalone "jats" book exporter; the
  * book-level equivalent of the single-document JATS exporter is BITS (Book
  * Interchange Tag Suite, a JATS extension for books).  The CLI therefore maps
  * the `jats` book output format to the BITS exporter, producing a

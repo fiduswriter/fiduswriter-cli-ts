@@ -9,7 +9,7 @@ project.
 `@fiduswriter/cli` is a Node.js command-line interface and programmatic library
 for converting Fidus Writer documents and books between formats. It reuses the
 same import/export logic as the main Fidus Writer application through
-`@fiduswriter/document` and `@fiduswriter/books-document`.
+`@fiduswriter/document` and `@fiduswriter/books`.
 
 - Package name: `@fiduswriter/cli`
 - License: `AGPL-3.0-or-later`
@@ -29,7 +29,7 @@ Code in this repository should be limited to:
 Do **not** put in this repository:
 
 - Document model code (belongs in `@fiduswriter/document`).
-- Book-level export logic (belongs in `@fiduswriter/books-document`).
+- Book-level export logic (belongs in `@fiduswriter/books`).
 - UI components (belongs in `fwtoolkit` or the main app).
 - Django-specific logic.
 
@@ -133,7 +133,7 @@ expectations.
 
 When publishing a new version:
 
-- Ensure the latest `@fiduswriter/document` and `@fiduswriter/books-document`
+- Ensure the latest `@fiduswriter/document` and `@fiduswriter/books`
   releases are reflected in `package.json`.
 - Run `pnpm test` before publishing.
 
@@ -150,5 +150,5 @@ When publishing a new version:
 - `package.json` — scripts, exports and dependency versions.
 - `tsconfig.json` — compiler options.
 - `src/index.ts` — programmatic library entry point.
-- `@fiduswriter/document` and `@fiduswriter/books-document` — the libraries
+- `@fiduswriter/document` and `@fiduswriter/books` — the libraries
   this CLI wraps.

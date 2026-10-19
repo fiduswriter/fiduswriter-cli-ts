@@ -1,5 +1,5 @@
-import { NativeBookExporter } from "@fiduswriter/books-document/exporter/native"
-import type { Book, DocumentListEntry } from "@fiduswriter/books-document"
+import { NativeBookExporter } from "@fiduswriter/books/exporter/native"
+import type { Book, DocumentListEntry } from "@fiduswriter/books"
 import type { User } from "@fiduswriter/document"
 import type { Schema } from "prosemirror-model"
 

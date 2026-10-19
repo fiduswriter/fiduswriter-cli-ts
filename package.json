@@ -1,6 +1,6 @@
 {
     "name": "@fiduswriter/cli",
-    "version": "0.1.28",
+    "version": "0.1.29",
     "description": "Command-line interface for Fidus Writer document conversion",
     "keywords": [
         "fiduswriter",
@@ -46,7 +46,7 @@
         "access": "public"
     },
     "dependencies": {
-        "@fiduswriter/books-document": "^0.1.29",
+        "@fiduswriter/books": "^0.2.0",
         "@fiduswriter/document": "^0.3.33",
         "citeproc-plus": "^2.0.4",
         "commander": "^15.0.0",

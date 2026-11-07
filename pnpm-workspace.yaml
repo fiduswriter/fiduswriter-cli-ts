@@ -8,4 +8,4 @@ onlyBuiltDependencies:
 
 overrides:
   '@xmldom/xmldom': 0.9.12
-  glob@^10.5.0: ^13.0.6
+  glob@^10.5.0: ^14.0.0

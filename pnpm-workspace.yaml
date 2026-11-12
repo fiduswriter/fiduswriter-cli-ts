@@ -1,11 +1,4 @@
-minimumReleaseAge: 0
-
-onlyBuiltDependencies:
-  - core-js
-  - core-js-pure
-  - es5-ext
-  - esbuild
-
-overrides:
-  '@xmldom/xmldom': 0.9.12
-  glob@^10.5.0: ^14.0.0
+allowBuilds:
+    esbuild: true
+    core-js-pure: false
+    es5-ext: false

@@ -165,3 +165,10 @@ The test suite covers:
 ## License
 
 AGPL-3.0-or-later
+
+## Trademark
+
+"Fidus Writer" is a registered EU trademark of Lund Info AB. This
+repository's license covers the code, not the name and logo — see
+[TRADEMARK.md](TRADEMARK.md) and the
+[Fidus Writer trademark policy](https://www.fiduswriter.org/trademark/).
